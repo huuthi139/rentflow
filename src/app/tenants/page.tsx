@@ -9,6 +9,8 @@ import Modal from "@/components/ui/Modal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import TenantForm from "@/components/crud/TenantForm";
 import { useData } from "@/lib/store";
+import { useToast } from "@/components/ui/Toast";
+import { exportToCSV } from "@/lib/export";
 import { tenantStats } from "@/data/mock";
 import type { Tenant } from "@/data/mock";
 
@@ -16,6 +18,7 @@ const tabs = ["All Records", "Leads", "Active Tenants", "Former Tenants"];
 
 export default function TenantsPage() {
   const { tenants, addTenant, updateTenant, deleteTenant } = useData();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("All Records");
   const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; tenant?: Tenant } | null>(null);
 
@@ -38,9 +41,12 @@ export default function TenantsPage() {
               <span className="material-symbols-outlined text-lg">tune</span>
               Filter Status
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors">
+            <button
+              onClick={() => exportToCSV(tenants.map(t => ({ ID: t.id, Name: t.name, Email: t.email, Phone: t.phone, Property: t.property, Status: t.status, Payment: t.payment, 'Contract End': t.contractEnd })), 'tenants')}
+              className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors"
+            >
               <span className="material-symbols-outlined text-lg">download</span>
-              Export
+              Export CSV
             </button>
             <button
               onClick={() => setModal({ mode: 'add' })}
@@ -169,8 +175,13 @@ export default function TenantsPage() {
         <TenantForm
           tenant={modal?.tenant}
           onSubmit={(data) => {
-            if (modal?.mode === 'edit') updateTenant(data);
-            else addTenant(data);
+            if (modal?.mode === 'edit') {
+              updateTenant(data);
+              toast("Tenant updated successfully", "success");
+            } else {
+              addTenant(data);
+              toast("Tenant added successfully", "success");
+            }
             setModal(null);
           }}
           onCancel={() => setModal(null)}
@@ -181,7 +192,7 @@ export default function TenantsPage() {
       <ConfirmDialog
         isOpen={modal?.mode === 'delete'}
         onClose={() => setModal(null)}
-        onConfirm={() => { if (modal?.tenant) deleteTenant(modal.tenant.id); }}
+        onConfirm={() => { if (modal?.tenant) { deleteTenant(modal.tenant.id); toast("Tenant deleted", "success"); } }}
         title="Delete Tenant"
         message={`Are you sure you want to delete "${modal?.tenant?.name}"? This action cannot be undone.`}
       />

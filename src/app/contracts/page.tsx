@@ -7,6 +7,8 @@ import Modal from "@/components/ui/Modal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ContractForm from "@/components/crud/ContractForm";
 import { useData } from "@/lib/store";
+import { useToast } from "@/components/ui/Toast";
+import { exportToCSV } from "@/lib/export";
 import { payments, paymentStats } from "@/data/mock";
 import type { Contract } from "@/data/mock";
 
@@ -14,6 +16,7 @@ const tabs = ["Contracts", "Payments"] as const;
 
 export default function ContractsPage() {
   const { contracts, addContract, updateContract, deleteContract } = useData();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Contracts");
   const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; contract?: Contract } | null>(null);
 
@@ -60,7 +63,7 @@ export default function ContractsPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors"><span className="material-symbols-outlined text-lg">tune</span>Filter</button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors"><span className="material-symbols-outlined text-lg">download</span>Export CSV</button>
+            <button onClick={() => exportToCSV(contracts.map(c => ({ ID: c.id, Tenant: c.tenant, Property: c.property, 'Start Date': c.startDate, 'End Date': c.endDate, Rent: c.rentPrice, Deposit: c.deposit, Status: c.status })), 'contracts')} className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors"><span className="material-symbols-outlined text-lg">download</span>Export CSV</button>
           </div>
           {activeTab === "Payments" && (<button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"><span className="material-symbols-outlined text-lg">campaign</span>Send Reminders</button>)}
         </div>
@@ -164,8 +167,13 @@ export default function ContractsPage() {
         <ContractForm
           contract={modal?.contract}
           onSubmit={(data) => {
-            if (modal?.mode === 'edit') updateContract(data);
-            else addContract(data);
+            if (modal?.mode === 'edit') {
+              updateContract(data);
+              toast("Contract updated successfully", "success");
+            } else {
+              addContract(data);
+              toast("Contract created successfully", "success");
+            }
             setModal(null);
           }}
           onCancel={() => setModal(null)}
@@ -176,7 +184,7 @@ export default function ContractsPage() {
       <ConfirmDialog
         isOpen={modal?.mode === 'delete'}
         onClose={() => setModal(null)}
-        onConfirm={() => { if (modal?.contract) deleteContract(modal.contract.id); }}
+        onConfirm={() => { if (modal?.contract) { deleteContract(modal.contract.id); toast("Contract deleted", "success"); } }}
         title="Delete Contract"
         message={`Are you sure you want to delete contract "${modal?.contract?.id}"? This action cannot be undone.`}
       />

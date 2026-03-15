@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import { DataProvider } from "@/lib/store";
+import { ToastProvider } from "@/components/ui/Toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,7 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-display bg-background-light dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased`}>
-        <DataProvider><AppShell>{children}</AppShell></DataProvider>
+        <DataProvider><ToastProvider><AppShell>{children}</AppShell></ToastProvider></DataProvider>
       </body>
     </html>
   );

@@ -8,10 +8,13 @@ import Modal from "@/components/ui/Modal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import PropertyForm from "@/components/crud/PropertyForm";
 import { useData } from "@/lib/store";
+import { useToast } from "@/components/ui/Toast";
+import { exportToCSV } from "@/lib/export";
 import type { Property } from "@/data/mock";
 
 export default function PropertiesPage() {
   const { properties, addProperty, updateProperty, deleteProperty } = useData();
+  const { toast } = useToast();
   const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; property?: Property } | null>(null);
 
   return (
@@ -19,13 +22,22 @@ export default function PropertiesPage() {
       <Header
         title="Properties"
         actions={
-          <button
-            onClick={() => setModal({ mode: 'add' })}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
-          >
-            <span className="material-symbols-outlined text-lg">add</span>
-            Add Property
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => exportToCSV(properties.map(p => ({ ID: p.id, Name: p.name, Building: p.building, Location: p.location, Status: p.status, 'Rent (Tenant)': p.rentTenant, 'Rent (Owner)': p.rentOwner, Profit: p.profit })), 'properties')}
+              className="flex items-center gap-2 px-4 py-2 border border-primary/20 dark:border-slate-600 text-primary dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-primary/5 dark:hover:bg-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">download</span>
+              Export CSV
+            </button>
+            <button
+              onClick={() => setModal({ mode: 'add' })}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              Add Property
+            </button>
+          </div>
         }
       />
 
@@ -133,8 +145,13 @@ export default function PropertiesPage() {
         <PropertyForm
           property={modal?.property}
           onSubmit={(data) => {
-            if (modal?.mode === 'edit') updateProperty(data);
-            else addProperty(data);
+            if (modal?.mode === 'edit') {
+              updateProperty(data);
+              toast("Property updated successfully", "success");
+            } else {
+              addProperty(data);
+              toast("Property added successfully", "success");
+            }
             setModal(null);
           }}
           onCancel={() => setModal(null)}
@@ -145,7 +162,7 @@ export default function PropertiesPage() {
       <ConfirmDialog
         isOpen={modal?.mode === 'delete'}
         onClose={() => setModal(null)}
-        onConfirm={() => { if (modal?.property) deleteProperty(modal.property.id); }}
+        onConfirm={() => { if (modal?.property) { deleteProperty(modal.property.id); toast("Property deleted", "success"); } }}
         title="Delete Property"
         message={`Are you sure you want to delete "${modal?.property?.name}"? This action cannot be undone.`}
       />
