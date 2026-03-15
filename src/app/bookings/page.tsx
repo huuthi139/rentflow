@@ -15,111 +15,42 @@ const bookingsData = [
 ];
 
 const tabs = ["All", "Scheduled", "Completed", "Cancelled"];
-
-const statusVariantMap: Record<string, "info" | "success" | "neutral" | "danger"> = {
-  Scheduled: "info",
-  Completed: "success",
-  Cancelled: "neutral",
-  "No Show": "danger",
-};
+const statusVariantMap: Record<string, "info" | "success" | "neutral" | "danger"> = { Scheduled: "info", Completed: "success", Cancelled: "neutral", "No Show": "danger" };
 
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState("All");
-
-  const filtered = bookingsData.filter((b) => {
-    if (activeTab === "All") return true;
-    return b.status === activeTab;
-  });
-
+  const filtered = bookingsData.filter((b) => activeTab === "All" ? true : b.status === activeTab);
   const todayCount = bookingsData.filter((b) => b.dateTime.startsWith("Mar 15")).length;
-  const weekCount = bookingsData.length;
-  const completedCount = bookingsData.filter((b) => b.status === "Completed").length;
-  const noShowCount = bookingsData.filter((b) => b.status === "No Show").length;
 
   return (
     <>
-      <Header
-        title="Bookings"
-        subtitle="Manage property viewing appointments"
-        actions={
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
-            <span className="material-symbols-outlined text-lg">add</span>
-            New Booking
-          </button>
-        }
-      />
+      <Header title="Bookings" subtitle="Manage property viewing appointments" actions={<button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"><span className="material-symbols-outlined text-lg">add</span>New Booking</button>} />
 
       <div className="p-8 space-y-6">
-        {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatCard label="Today's Bookings" value={todayCount} icon="today" />
-          <StatCard label="This Week" value={weekCount} icon="date_range" />
-          <StatCard label="Completed" value={completedCount} icon="check_circle" iconColor="text-emerald-600" />
-          <StatCard label="No Shows" value={noShowCount} icon="person_off" iconColor="text-red-500" />
+          <StatCard label="This Week" value={bookingsData.length} icon="date_range" />
+          <StatCard label="Completed" value={bookingsData.filter((b) => b.status === "Completed").length} icon="check_circle" iconColor="text-emerald-600" />
+          <StatCard label="No Shows" value={bookingsData.filter((b) => b.status === "No Show").length} icon="person_off" iconColor="text-red-500" />
         </div>
 
-        {/* Tabs */}
         <div className="flex items-center gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
-                activeTab === tab
-                  ? "bg-primary text-white"
-                  : "bg-white border border-primary/10 text-slate-600 hover:bg-primary/5"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+          {tabs.map((tab) => (<button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${activeTab === tab ? "bg-primary text-white" : "bg-white dark:bg-slate-800 border border-primary/10 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-primary/5"}`}>{tab}</button>))}
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 bg-slate-50/50">
-                <th className="text-left py-4 px-6 font-semibold">ID</th>
-                <th className="text-left py-4 px-6 font-semibold">Client</th>
-                <th className="text-left py-4 px-6 font-semibold">Property</th>
-                <th className="text-left py-4 px-6 font-semibold">Agent</th>
-                <th className="text-left py-4 px-6 font-semibold">Date & Time</th>
-                <th className="text-left py-4 px-6 font-semibold">Status</th>
-                <th className="text-left py-4 px-6 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((b) => (
-                <tr key={b.id} className="border-b border-slate-50 hover:bg-primary/[0.02] transition-colors">
-                  <td className="py-4 px-6 text-sm font-semibold text-primary">{b.id}</td>
-                  <td className="py-4 px-6">
-                    <p className="text-sm font-medium">{b.client}</p>
-                    {b.notes && <p className="text-xs text-slate-400 mt-0.5">{b.notes}</p>}
-                  </td>
-                  <td className="py-4 px-6 text-sm text-slate-600">{b.property}</td>
-                  <td className="py-4 px-6 text-sm text-slate-600">{b.agent}</td>
-                  <td className="py-4 px-6 text-sm text-slate-600">{b.dateTime}</td>
-                  <td className="py-4 px-6">
-                    <StatusBadge label={b.status} variant={statusVariantMap[b.status] || "neutral"} dot />
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-1">
-                      <button className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
-                        <span className="material-symbols-outlined text-lg">visibility</span>
-                      </button>
-                      <button className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
-                        <span className="material-symbols-outlined text-lg">edit</span>
-                      </button>
-                      <button className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                        <span className="material-symbols-outlined text-lg">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+          <table className="w-full"><thead><tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50"><th className="text-left py-4 px-6 font-semibold">ID</th><th className="text-left py-4 px-6 font-semibold">Client</th><th className="text-left py-4 px-6 font-semibold">Property</th><th className="text-left py-4 px-6 font-semibold">Agent</th><th className="text-left py-4 px-6 font-semibold">Date & Time</th><th className="text-left py-4 px-6 font-semibold">Status</th><th className="text-left py-4 px-6 font-semibold">Actions</th></tr></thead>
+          <tbody>{filtered.map((b) => (
+            <tr key={b.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
+              <td className="py-4 px-6 text-sm font-semibold text-primary">{b.id}</td>
+              <td className="py-4 px-6"><p className="text-sm font-medium">{b.client}</p>{b.notes && <p className="text-xs text-slate-400 mt-0.5">{b.notes}</p>}</td>
+              <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{b.property}</td>
+              <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{b.agent}</td>
+              <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{b.dateTime}</td>
+              <td className="py-4 px-6"><StatusBadge label={b.status} variant={statusVariantMap[b.status] || "neutral"} dot /></td>
+              <td className="py-4 px-6"><div className="flex items-center gap-1"><button className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"><span className="material-symbols-outlined text-lg">visibility</span></button><button className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"><span className="material-symbols-outlined text-lg">edit</span></button><button className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"><span className="material-symbols-outlined text-lg">delete</span></button></div></td>
+            </tr>
+          ))}</tbody></table>
         </div>
       </div>
     </>

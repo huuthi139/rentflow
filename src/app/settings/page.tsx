@@ -32,7 +32,7 @@ export default function SettingsPage() {
         <div className="flex gap-8">
           {/* Sidebar Tabs */}
           <div className="w-56 flex-shrink-0">
-            <nav className="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+            <nav className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
               {sidebarTabs.map((tab) => (
                 <button
                   key={tab.label}
@@ -40,7 +40,7 @@ export default function SettingsPage() {
                   className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-l-2 ${
                     activeTab === tab.label
                       ? "bg-primary/5 text-primary border-primary"
-                      : "text-slate-600 border-transparent hover:bg-slate-50 hover:text-slate-800"
+                      : "text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <span className={`material-symbols-outlined text-xl ${activeTab === tab.label ? "filled" : ""}`}>
@@ -55,8 +55,8 @@ export default function SettingsPage() {
           {/* Content Area */}
           <div className="flex-1 min-w-0">
             {activeTab === "Profile" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-6">Profile Settings</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Profile Settings</h3>
 
                 {/* Avatar */}
                 <div className="flex items-center gap-5 mb-8">
@@ -64,8 +64,8 @@ export default function SettingsPage() {
                     AR
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Alex Rivera</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Property Manager</p>
+                    <p className="text-sm font-semibold dark:text-slate-200">Alex Rivera</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Property Manager</p>
                     <button className="mt-2 text-xs text-primary font-semibold hover:underline">Change Photo</button>
                   </div>
                 </div>
@@ -73,32 +73,32 @@ export default function SettingsPage() {
                 {/* Form Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name</label>
                     <input
                       type="text"
                       defaultValue="Alex Rivera"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
                     <input
                       type="email"
                       defaultValue="alex@rentflow.com"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Phone</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Phone</label>
                     <input
                       type="tel"
                       defaultValue="+1 (555) 123-4567"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Role</label>
-                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Role</label>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
                       <option>Admin</option>
                       <option>Property Manager</option>
                       <option>Agent</option>
@@ -107,8 +107,8 @@ export default function SettingsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Language</label>
-                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Language</label>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
                       <option>English</option>
                       <option>Vietnamese</option>
                       <option>French</option>
@@ -126,47 +126,47 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Company" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-6">Company Information</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Company Information</h3>
 
                 {/* Logo Upload */}
                 <div className="mb-8">
-                  <label className="block text-sm font-medium text-slate-700 mb-3">Company Logo</label>
-                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-primary/30 transition-colors">
-                    <span className="material-symbols-outlined text-4xl text-slate-300">cloud_upload</span>
-                    <p className="text-sm text-slate-500 mt-2">Drag & drop or click to upload</p>
-                    <p className="text-xs text-slate-400 mt-1">PNG, JPG up to 2MB</p>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Company Logo</label>
+                  <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center hover:border-primary/30 transition-colors">
+                    <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">cloud_upload</span>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Drag & drop or click to upload</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">PNG, JPG up to 2MB</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Company Name</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Company Name</label>
                     <input
                       type="text"
                       defaultValue="RentFlow Properties"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Address</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Address</label>
                     <input
                       type="text"
                       defaultValue="123 Main Street, Suite 400"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">City</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">City</label>
                     <input
                       type="text"
                       defaultValue="San Francisco"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Country</label>
-                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Country</label>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
                       <option>United States</option>
                       <option>Vietnam</option>
                       <option>Canada</option>
@@ -184,8 +184,8 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Notifications" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-6">Notification Preferences</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Notification Preferences</h3>
                 <div className="space-y-5">
                   {[
                     { label: "Payment received", desc: "Get notified when a tenant makes a payment" },
@@ -194,14 +194,14 @@ export default function SettingsPage() {
                     { label: "Maintenance request", desc: "Alert when a new maintenance request is submitted" },
                     { label: "Contract expiring", desc: "Reminder when a lease is about to expire" },
                   ].map((item) => (
-                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
                       <div>
-                        <p className="text-sm font-medium">{item.label}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                        <p className="text-sm font-medium dark:text-slate-200">{item.label}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{item.desc}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" defaultChecked className="sr-only peer" />
-                        <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                        <div className="w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
                       </label>
                     </div>
                   ))}
@@ -210,9 +210,9 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Users & Roles" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                  <h3 className="text-lg font-bold">Users & Roles</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
+                  <h3 className="text-lg font-bold dark:text-slate-200">Users & Roles</h3>
                   <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
                     <span className="material-symbols-outlined text-lg">person_add</span>
                     Invite User
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                 </div>
                 <table className="w-full">
                   <thead>
-                    <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 bg-slate-50/50">
+                    <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                       <th className="text-left py-4 px-6 font-semibold">Name</th>
                       <th className="text-left py-4 px-6 font-semibold">Email</th>
                       <th className="text-left py-4 px-6 font-semibold">Role</th>
@@ -230,23 +230,23 @@ export default function SettingsPage() {
                   </thead>
                   <tbody>
                     {usersData.map((u) => (
-                      <tr key={u.email} className="border-b border-slate-50 hover:bg-primary/[0.02] transition-colors">
+                      <tr key={u.email} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3">
                             <div className="size-8 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-xs">
                               {u.name.split(" ").map((n) => n[0]).join("")}
                             </div>
-                            <span className="text-sm font-medium">{u.name}</span>
+                            <span className="text-sm font-medium dark:text-slate-200">{u.name}</span>
                           </div>
                         </td>
-                        <td className="py-4 px-6 text-sm text-slate-600">{u.email}</td>
+                        <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.email}</td>
                         <td className="py-4 px-6">
                           <StatusBadge label={u.role} variant={u.role === "Admin" ? "primary" : "neutral"} />
                         </td>
                         <td className="py-4 px-6">
                           <StatusBadge label={u.status} variant={u.status === "Active" ? "success" : "neutral"} dot />
                         </td>
-                        <td className="py-4 px-6 text-sm text-slate-600">{u.lastActive}</td>
+                        <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.lastActive}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -255,26 +255,26 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Billing" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-6">Billing & Subscription</h3>
-                <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 mb-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Billing & Subscription</h3>
+                <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-5 border border-primary/10 dark:border-primary/20 mb-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold text-primary">Professional Plan</p>
-                      <p className="text-xs text-slate-500 mt-1">Up to 100 properties, unlimited users</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Up to 100 properties, unlimited users</p>
                     </div>
-                    <p className="text-2xl font-bold">$49<span className="text-sm font-normal text-slate-500">/mo</span></p>
+                    <p className="text-2xl font-bold dark:text-slate-200">$49<span className="text-sm font-normal text-slate-500 dark:text-slate-400">/mo</span></p>
                   </div>
                 </div>
-                <button className="px-4 py-2 bg-white border border-primary/20 text-primary rounded-lg text-sm font-bold hover:bg-primary/5 transition-colors">
+                <button className="px-4 py-2 bg-white dark:bg-slate-700 border border-primary/20 dark:border-slate-600 text-primary dark:text-primary rounded-lg text-sm font-bold hover:bg-primary/5 dark:hover:bg-slate-600 transition-colors">
                   Manage Subscription
                 </button>
               </div>
             )}
 
             {activeTab === "Integrations" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-6">Integrations</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Integrations</h3>
                 <div className="space-y-4">
                   {[
                     { name: "Google Calendar", desc: "Sync bookings with Google Calendar", connected: true },
@@ -282,20 +282,20 @@ export default function SettingsPage() {
                     { name: "QuickBooks", desc: "Accounting and invoicing", connected: false },
                     { name: "Slack", desc: "Team notifications and alerts", connected: false },
                   ].map((int) => (
-                    <div key={int.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:border-primary/10 transition-colors">
+                    <div key={int.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-primary/10 dark:hover:border-slate-600 transition-colors">
                       <div className="flex items-center gap-4">
-                        <div className="size-10 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-slate-500">extension</span>
+                        <div className="size-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-slate-500 dark:text-slate-400">extension</span>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold">{int.name}</p>
-                          <p className="text-xs text-slate-500 mt-0.5">{int.desc}</p>
+                          <p className="text-sm font-semibold dark:text-slate-200">{int.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{int.desc}</p>
                         </div>
                       </div>
                       <button className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
                         int.connected
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : "bg-white border border-primary/20 text-primary hover:bg-primary/5"
+                          ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                          : "bg-white dark:bg-slate-700 border border-primary/20 dark:border-slate-600 text-primary hover:bg-primary/5 dark:hover:bg-slate-600"
                       }`}>
                         {int.connected ? "Connected" : "Connect"}
                       </button>
