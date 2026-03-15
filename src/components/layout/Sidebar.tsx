@@ -54,7 +54,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <span className="material-symbols-outlined text-xl">domain</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold leading-tight tracking-tight">RentFlow</h1>
+            <h1 className="text-lg font-bold leading-tight tracking-tight">WeHome</h1>
             <p className="text-[11px] text-primary font-medium">Property Management</p>
           </div>
         </div>

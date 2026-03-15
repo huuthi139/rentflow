@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -13,6 +15,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const closeSidebar = useCallback(() => {
     setSidebarOpen(false);
   }, []);
+
+  // Auth pages render without sidebar/shell
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background-light dark:bg-slate-900">

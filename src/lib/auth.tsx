@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: string | null }>;
+  signInWithProvider: (provider: "google" | "github") => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -78,6 +79,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   }, []);
 
+  const signInWithProvider = useCallback(async (provider: "google" | "github"): Promise<{ error: string | null }> => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return { error: "Supabase is not configured." };
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: typeof window !== "undefined" ? `${window.location.origin}/` : undefined,
+      },
+    });
+    if (error) {
+      return { error: error.message };
+    }
+    return { error: null };
+  }, []);
+
   const signOut = useCallback(async () => {
     const supabase = getSupabase();
     if (supabase) {
@@ -88,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithProvider, signOut }}>
       {children}
     </AuthContext.Provider>
   );
