@@ -5,6 +5,22 @@ import { useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
+// Demo admin credentials
+const DEMO_EMAIL = "admin";
+const DEMO_PASSWORD = "admin123";
+const DEMO_USER_KEY = "wehome_demo_user";
+
+function createDemoUser(): User {
+  return {
+    id: "demo-admin-001",
+    email: "admin@wehome.com",
+    app_metadata: {},
+    user_metadata: { full_name: "Admin" },
+    aud: "authenticated",
+    created_at: new Date().toISOString(),
+  } as User;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -22,6 +38,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    // Check for demo user in localStorage
+    const demoStored = localStorage.getItem(DEMO_USER_KEY);
+    if (demoStored) {
+      setUser(createDemoUser());
+      setLoading(false);
+      return;
+    }
+
     const supabase = getSupabase();
     if (!supabase) {
       setLoading(false);
@@ -46,9 +70,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string): Promise<{ error: string | null }> => {
+    // Demo login: admin / admin123
+    if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      localStorage.setItem(DEMO_USER_KEY, "true");
+      setUser(createDemoUser());
+      return { error: null };
+    }
+
     const supabase = getSupabase();
     if (!supabase) {
-      return { error: "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY." };
+      return { error: "Supabase is not configured. Use admin / admin123 for demo access." };
     }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -61,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = useCallback(async (email: string, password: string, name: string): Promise<{ error: string | null }> => {
     const supabase = getSupabase();
     if (!supabase) {
-      return { error: "Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY." };
+      return { error: "Supabase is not configured." };
     }
 
     const { error } = await supabase.auth.signUp({
@@ -98,6 +129,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    // Clear demo user
+    localStorage.removeItem(DEMO_USER_KEY);
+
     const supabase = getSupabase();
     if (supabase) {
       await supabase.auth.signOut();

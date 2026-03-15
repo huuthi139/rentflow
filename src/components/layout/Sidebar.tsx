@@ -3,25 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 
 const navItems = [
-  { icon: "dashboard", label: "Dashboard", href: "/" },
-  { icon: "corporate_fare", label: "Buildings", href: "/buildings" },
-  { icon: "house", label: "Properties", href: "/properties" },
-  { icon: "group", label: "Tenants", href: "/tenants" },
-  { icon: "leaderboard", label: "Leads", href: "/leads" },
-  { icon: "description", label: "Contracts", href: "/contracts" },
-  { icon: "calendar_month", label: "Bookings", href: "/bookings" },
-  { icon: "payments", label: "Payments", href: "/payments" },
-  { icon: "receipt_long", label: "Expenses", href: "/expenses" },
-  { icon: "build", label: "Maintenance", href: "/maintenance" },
-  { icon: "fact_check", label: "Handovers", href: "/handovers" },
-  { icon: "report_problem", label: "Issues", href: "/issues" },
-  { icon: "bar_chart", label: "Analytics", href: "/analytics" },
+  { icon: "dashboard", labelKey: "nav.dashboard", href: "/" },
+  { icon: "corporate_fare", labelKey: "nav.buildings", href: "/buildings" },
+  { icon: "house", labelKey: "nav.properties", href: "/properties" },
+  { icon: "group", labelKey: "nav.tenants", href: "/tenants" },
+  { icon: "leaderboard", labelKey: "nav.leads", href: "/leads" },
+  { icon: "description", labelKey: "nav.contracts", href: "/contracts" },
+  { icon: "calendar_month", labelKey: "nav.bookings", href: "/bookings" },
+  { icon: "payments", labelKey: "nav.payments", href: "/payments" },
+  { icon: "receipt_long", labelKey: "nav.expenses", href: "/expenses" },
+  { icon: "build", labelKey: "nav.maintenance", href: "/maintenance" },
+  { icon: "fact_check", labelKey: "nav.handovers", href: "/handovers" },
+  { icon: "report_problem", labelKey: "nav.issues", href: "/issues" },
+  { icon: "bar_chart", labelKey: "nav.analytics", href: "/analytics" },
 ];
 
 const systemItems = [
-  { icon: "settings", label: "Settings", href: "/settings" },
+  { icon: "settings", labelKey: "nav.settings", href: "/settings" },
 ];
 
 interface SidebarProps {
@@ -32,6 +33,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
+  const { t } = useI18n();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -85,12 +87,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             >
               {item.icon}
             </span>
-            {item.label}
+            {t(item.labelKey)}
           </Link>
         ))}
 
         <div className="pt-6 pb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-          System
+          {t('nav.system')}
         </div>
         {systemItems.map((item) => (
           <Link
@@ -104,7 +106,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             }`}
           >
             <span className="material-symbols-outlined text-xl">{item.icon}</span>
-            {item.label}
+            {t(item.labelKey)}
           </Link>
         ))}
       </nav>
@@ -131,7 +133,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <button
             onClick={signOut}
             className="text-slate-400 hover:text-red-500 transition-colors"
-            title="Sign out"
+            title={t('nav.signout')}
           >
             <span className="material-symbols-outlined text-xl">logout</span>
           </button>

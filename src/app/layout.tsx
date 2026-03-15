@@ -7,6 +7,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import { AuthProvider } from "@/lib/auth";
 import AuthGuard from "@/components/layout/AuthGuard";
 import { NotificationProvider } from "@/lib/notifications";
+import { I18nProvider } from "@/lib/i18n";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "RentFlow - Property Management SaaS",
+  title: "WeHome - Property Management SaaS",
   description: "Manage 1000+ rental properties, tenants, contracts, payments, and maintenance",
 };
 
@@ -46,7 +47,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-display bg-background-light dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased`}>
-        <NotificationProvider><DataProvider><AuthProvider><ToastProvider><AuthGuard><AppShell>{children}</AppShell></AuthGuard></ToastProvider></AuthProvider></DataProvider></NotificationProvider>
+        <I18nProvider><NotificationProvider><DataProvider><AuthProvider><ToastProvider><AuthGuard><AppShell>{children}</AppShell></AuthGuard></ToastProvider></AuthProvider></DataProvider></NotificationProvider></I18nProvider>
       </body>
     </html>
   );

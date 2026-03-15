@@ -107,15 +107,15 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email / Username</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">mail</span>
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-colors"
-                  placeholder="admin@rentflow.com"
+                  placeholder="admin"
                   required
                 />
               </div>
@@ -161,6 +161,14 @@ export default function LoginPage() {
                 "Sign In"
               )}
             </button>
+
+            {/* Demo credentials hint */}
+            <div className="flex items-center gap-2 px-4 py-3 bg-primary/5 border border-primary/20 rounded-lg">
+              <span className="material-symbols-outlined text-primary text-lg">info</span>
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                Demo: <span className="font-mono font-bold text-primary">admin</span> / <span className="font-mono font-bold text-primary">admin123</span>
+              </p>
+            </div>
           </form>
 
           <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import NotificationPanel from "./NotificationPanel";
 import GlobalSearchResults from "./GlobalSearchResults";
 import { useNotifications } from "@/lib/notifications";
+import { useI18n } from "@/lib/i18n";
 
 interface HeaderProps {
   title: string;
@@ -19,6 +20,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { locale, setLocale, t } = useI18n();
 
   // Debounce search
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
             <input
               ref={searchInputRef}
               className="bg-transparent border-none focus:ring-0 focus:outline-none text-sm w-full placeholder:text-slate-400 dark:text-slate-200 ml-2"
-              placeholder="Search tenants, properties, transactions..."
+              placeholder={t('search.placeholder')}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -112,17 +114,31 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
           {searchOpen && <GlobalSearchResults query={debouncedQuery} onClose={closeSearch} onSelect={closeSearch} />}
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5">
         {actions}
+
+        {/* Language Toggle */}
+        <button
+          onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}
+          className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+          title={locale === 'en' ? 'Chuyển sang Tiếng Việt' : 'Switch to English'}
+        >
+          <span className="material-symbols-outlined text-lg">translate</span>
+          <span className="uppercase">{locale === 'en' ? 'VI' : 'EN'}</span>
+        </button>
+
+        {/* Dark Mode Toggle */}
         <button
           onClick={toggleDarkMode}
           className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-          title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          title={isDark ? t('theme.light') : t('theme.dark')}
         >
           <span className="material-symbols-outlined">
             {isDark ? "light_mode" : "dark_mode"}
           </span>
         </button>
+
+        {/* Notifications */}
         <div className="relative">
           <button
             onClick={() => setNotifOpen((prev) => !prev)}
