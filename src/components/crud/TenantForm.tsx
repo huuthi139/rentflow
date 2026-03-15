@@ -58,6 +58,7 @@ export default function TenantForm({ tenant, onSubmit, onCancel }: TenantFormPro
         <FormField label="Status" as="select" required options={[
           { value: 'Active', label: 'Active' },
           { value: 'Lead', label: 'Lead' },
+          { value: 'Overdue', label: 'Overdue' },
           { value: 'Interested', label: 'Interested' },
           { value: 'Viewing', label: 'Viewing' },
           { value: 'Former', label: 'Former' },

@@ -24,7 +24,7 @@ function expenseToRow(e: Expense) { return { id: e.id, property: e.property, cat
 function rowToExpense(r: any): Expense { return { id: r.id, property: r.property, category: r.category, description: r.description, amount: Number(r.amount), date: r.date, vendor: r.vendor, receipt: r.receipt } }
 function bookingToRow(b: Booking) { return { id: b.id, tenant: b.tenant, property: b.property, agent: b.agent, date_time: b.dateTime, notes: b.notes, status: b.status } }
 function rowToBooking(r: any): Booking { return { id: r.id, tenant: r.tenant, property: r.property, agent: r.agent, dateTime: r.date_time, notes: r.notes, status: r.status } }
-function leadToRow(l: Lead) { return { id: l.id, name: l.name, email: l.email, phone: l.phone, interested_property: l.interestedProperty, budget: l.budget, stage: l.stage, source: l.source, assigned_agent: l.assignedAgent, notes: l.notes } }
+function leadToRow(l: Lead) { return { id: l.id, name: l.name, email: l.email, phone: l.phone, interested_property: l.interestedProperty, budget: l.budget, stage: l.stage, source: l.source, assigned_agent: l.assignedAgent, created_at: l.createdAt, notes: l.notes } }
 function rowToLead(r: any): Lead { return { id: r.id, name: r.name, email: r.email, phone: r.phone, interestedProperty: r.interested_property, budget: Number(r.budget), stage: r.stage, source: r.source, assignedAgent: r.assigned_agent, createdAt: r.created_at, notes: r.notes } }
 
 // ---- State & Reducer ----

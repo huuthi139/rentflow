@@ -4,13 +4,19 @@ import { use, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import StatusBadge, { getStatusVariant } from "@/components/ui/StatusBadge";
-import { tenants, contracts, payments } from "@/data/mock";
+import Modal from "@/components/ui/Modal";
+import TenantForm from "@/components/crud/TenantForm";
+import { useData } from "@/lib/store";
+import { useToast } from "@/components/ui/Toast";
 
 const tabs = ["Overview", "Contracts", "Payment History", "Documents"] as const;
 
 export default function TenantDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Overview");
+  const [editOpen, setEditOpen] = useState(false);
+  const { tenants, contracts, payments, updateTenant } = useData();
+  const { toast } = useToast();
 
   const tenant = tenants.find((t) => t.id === id);
 
@@ -28,7 +34,7 @@ export default function TenantDetailPage({ params }: { params: Promise<{ id: str
     );
   }
 
-  const initials = tenant.name.split(" ").map((n) => n[0]).join("").toUpperCase();
+  const initials = tenant.name.split(" ").map((n: string) => n[0]).join("").toUpperCase();
   const tenantContracts = contracts.filter((c) => c.tenant === tenant.name);
   const currentContract = tenantContracts[0];
   const tenantPayments = payments.filter((p) => p.tenant === tenant.name);
@@ -56,12 +62,18 @@ export default function TenantDetailPage({ params }: { params: Promise<{ id: str
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg border border-primary/20 dark:border-slate-600 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2">
+            <button
+              onClick={() => setEditOpen(true)}
+              className="px-4 py-2 rounded-lg border border-primary/20 dark:border-slate-600 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2"
+            >
               <span className="material-symbols-outlined text-lg">edit</span>Edit
             </button>
-            <button className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center gap-2">
+            <a
+              href={`mailto:${tenant.email}`}
+              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center gap-2"
+            >
               <span className="material-symbols-outlined text-lg">mail</span>Contact
-            </button>
+            </a>
           </div>
         </div>
 
@@ -182,6 +194,19 @@ export default function TenantDetailPage({ params }: { params: Promise<{ id: str
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      <Modal isOpen={editOpen} onClose={() => setEditOpen(false)} title="Edit Tenant" size="lg">
+        <TenantForm
+          tenant={tenant}
+          onSubmit={(data) => {
+            updateTenant(data);
+            toast("Tenant updated successfully", "success");
+            setEditOpen(false);
+          }}
+          onCancel={() => setEditOpen(false)}
+        />
+      </Modal>
     </>
   );
 }

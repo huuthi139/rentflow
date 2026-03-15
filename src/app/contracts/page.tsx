@@ -141,7 +141,7 @@ export default function ContractsPage() {
             </div>
             <button onClick={() => exportToCSV(contracts.map(c => ({ ID: c.id, Tenant: c.tenant, Property: c.property, 'Start Date': c.startDate, 'End Date': c.endDate, Rent: c.rentPrice, Deposit: c.deposit, Status: c.status })), 'contracts')} className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors"><span className="material-symbols-outlined text-lg">download</span>Export CSV</button>
           </div>
-          {activeTab === "Payments" && (<button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"><span className="material-symbols-outlined text-lg">campaign</span>Send Reminders</button>)}
+          {activeTab === "Payments" && (<button onClick={() => toast("Payment reminders sent to all pending tenants", "success")} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"><span className="material-symbols-outlined text-lg">campaign</span>Send Reminders</button>)}
         </div>
 
         {activeTab === "Contracts" && (

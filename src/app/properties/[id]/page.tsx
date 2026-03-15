@@ -2,9 +2,14 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import StatusBadge, { getStatusVariant } from "@/components/ui/StatusBadge";
-import { properties, tenants, maintenanceTickets } from "@/data/mock";
+import Modal from "@/components/ui/Modal";
+import PropertyForm from "@/components/crud/PropertyForm";
+import { useData } from "@/lib/store";
+import { useToast } from "@/components/ui/Toast";
+import type { Property } from "@/data/mock";
 
 const mediaRooms = [
   {
@@ -42,6 +47,10 @@ const tabs = ["Overview", "Media Library", "Tenants", "Handover Reports", "Maint
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Overview");
+  const [editOpen, setEditOpen] = useState(false);
+  const { properties, tenants, maintenance, updateProperty } = useData();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const property = properties.find((p) => p.id === id);
 
@@ -56,7 +65,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
       (property && t.property.toLowerCase().includes(property.name.toLowerCase().split(" ")[0]))
   );
 
-  const relatedTickets = maintenanceTickets.filter(
+  const relatedTickets = maintenance.filter(
     (t) =>
       (property && t.property.toLowerCase().includes(property.building.toLowerCase().split(" ")[0])) ||
       (property && t.property.toLowerCase().includes(property.name.toLowerCase().split(" ")[0]))
@@ -91,11 +100,17 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             <h2 className="text-3xl md:text-4xl font-black tracking-tight">{propName}</h2>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg border border-primary/20 dark:border-slate-600 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2">
+            <button
+              onClick={() => setEditOpen(true)}
+              className="px-4 py-2 rounded-lg border border-primary/20 dark:border-slate-600 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2"
+            >
               <span className="material-symbols-outlined text-lg">edit</span>
               Edit Property
             </button>
-            <button className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab("Media Library")}
+              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center gap-2"
+            >
               <span className="material-symbols-outlined text-lg">upload</span>
               Upload Media
             </button>
@@ -491,6 +506,19 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <Modal isOpen={editOpen} onClose={() => setEditOpen(false)} title="Edit Property" size="lg">
+        <PropertyForm
+          property={property}
+          onSubmit={(data) => {
+            updateProperty(data);
+            toast("Property updated successfully", "success");
+            setEditOpen(false);
+          }}
+          onCancel={() => setEditOpen(false)}
+        />
+      </Modal>
     </>
   );
 }
