@@ -5,12 +5,19 @@ import Link from "next/link";
 import Header from "@/components/layout/Header";
 import StatusBadge, { getStatusVariant } from "@/components/ui/StatusBadge";
 import StatCard from "@/components/ui/StatCard";
-import { tenants, tenantStats } from "@/data/mock";
+import Modal from "@/components/ui/Modal";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import TenantForm from "@/components/crud/TenantForm";
+import { useData } from "@/lib/store";
+import { tenantStats } from "@/data/mock";
+import type { Tenant } from "@/data/mock";
 
 const tabs = ["All Records", "Leads", "Active Tenants", "Former Tenants"];
 
 export default function TenantsPage() {
+  const { tenants, addTenant, updateTenant, deleteTenant } = useData();
   const [activeTab, setActiveTab] = useState("All Records");
+  const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; tenant?: Tenant } | null>(null);
 
   const filteredTenants = tenants.filter((t) => {
     if (activeTab === "All Records") return true;
@@ -35,7 +42,10 @@ export default function TenantsPage() {
               <span className="material-symbols-outlined text-lg">download</span>
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+            <button
+              onClick={() => setModal({ mode: 'add' })}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+            >
               <span className="material-symbols-outlined text-lg">person_add</span>
               New Tenant
             </button>
@@ -123,12 +133,15 @@ export default function TenantsPage() {
                   </td>
                   <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{tenant.contractEnd}</td>
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
-                      <Link href={`/tenants/${tenant.id}`} className="size-8 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors">
+                    <div className="flex items-center gap-1">
+                      <Link href={`/tenants/${tenant.id}`} className="p-1 text-primary hover:bg-primary/10 rounded-lg transition-colors">
                         <span className="material-symbols-outlined text-lg">visibility</span>
                       </Link>
-                      <button className="size-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                      <button onClick={() => setModal({ mode: 'edit', tenant })} className="p-1 text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
                         <span className="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button onClick={() => setModal({ mode: 'delete', tenant })} className="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                        <span className="material-symbols-outlined text-lg">delete</span>
                       </button>
                     </div>
                   </td>
@@ -138,17 +151,40 @@ export default function TenantsPage() {
           </table>
 
           <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700">
-            <span className="text-sm text-primary">Showing <strong>1-10</strong> of <strong>856</strong> tenants</span>
+            <span className="text-sm text-primary">Showing <strong>1-{filteredTenants.length}</strong> of <strong>{tenants.length}</strong> tenants</span>
             <div className="flex items-center gap-1">
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-primary/5 text-sm">&lsaquo;</button>
               <button className="size-9 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">1</button>
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 text-sm">2</button>
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 text-sm">3</button>
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-primary/5 text-sm">&rsaquo;</button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Add/Edit Modal */}
+      <Modal
+        isOpen={modal?.mode === 'add' || modal?.mode === 'edit'}
+        onClose={() => setModal(null)}
+        title={modal?.mode === 'edit' ? 'Edit Tenant' : 'Add New Tenant'}
+        size="lg"
+      >
+        <TenantForm
+          tenant={modal?.tenant}
+          onSubmit={(data) => {
+            if (modal?.mode === 'edit') updateTenant(data);
+            else addTenant(data);
+            setModal(null);
+          }}
+          onCancel={() => setModal(null)}
+        />
+      </Modal>
+
+      {/* Delete Confirm */}
+      <ConfirmDialog
+        isOpen={modal?.mode === 'delete'}
+        onClose={() => setModal(null)}
+        onConfirm={() => { if (modal?.tenant) deleteTenant(modal.tenant.id); }}
+        title="Delete Tenant"
+        message={`Are you sure you want to delete "${modal?.tenant?.name}"? This action cannot be undone.`}
+      />
     </>
   );
 }
