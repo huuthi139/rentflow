@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import NotificationPanel from "./NotificationPanel";
 import GlobalSearchResults from "./GlobalSearchResults";
+import { useNotifications } from "@/lib/notifications";
 
 interface HeaderProps {
   title: string;
@@ -78,7 +79,7 @@ export default function Header({ title, subtitle, actions }: HeaderProps) {
     }
   }
 
-  const unreadCount = 3;
+  const { unreadCount } = useNotifications();
 
   return (
     <header className="h-16 border-b border-primary/10 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-10">

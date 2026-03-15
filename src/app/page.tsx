@@ -169,6 +169,7 @@ export default function DashboardPage() {
               <h3 className="text-lg font-bold">Upcoming Lease Expirations</h3>
               <Link href="/contracts" className="text-primary text-sm font-bold hover:underline">View All</Link>
             </div>
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
@@ -213,6 +214,7 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Maintenance Issues */}

@@ -39,6 +39,7 @@ export default function HandoversPage() {
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full"><thead><tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50"><th className="text-left py-4 px-6 font-semibold">Report ID</th><th className="text-left py-4 px-6 font-semibold">Property</th><th className="text-left py-4 px-6 font-semibold">Tenant</th><th className="text-left py-4 px-6 font-semibold">Type</th><th className="text-left py-4 px-6 font-semibold">Date</th><th className="text-left py-4 px-6 font-semibold">Inspector</th><th className="text-left py-4 px-6 font-semibold">Details</th><th className="text-left py-4 px-6 font-semibold">Status</th><th className="text-left py-4 px-6 font-semibold">Actions</th></tr></thead>
           <tbody>{filtered.map((h) => (
             <tr key={h.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
@@ -53,6 +54,7 @@ export default function HandoversPage() {
               <td className="py-4 px-6"><div className="flex items-center gap-1"><button className="p-1.5 rounded-lg hover:bg-primary/5 text-slate-400 hover:text-primary transition-colors" title="View"><span className="material-symbols-outlined text-lg">visibility</span></button><button className="p-1.5 rounded-lg hover:bg-primary/5 text-slate-400 hover:text-primary transition-colors" title="Download"><span className="material-symbols-outlined text-lg">download</span></button><button className="p-1.5 rounded-lg hover:bg-primary/5 text-slate-400 hover:text-primary transition-colors" title="Edit"><span className="material-symbols-outlined text-lg">edit</span></button></div></td>
             </tr>
           ))}</tbody></table>
+          </div>
         </div>
       </div>
     </>

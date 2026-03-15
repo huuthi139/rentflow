@@ -1,8 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { useToast } from "@/components/ui/Toast";
+
+const SETTINGS_KEY = "rentflow_settings";
+
+interface SettingsData {
+  profile: {
+    fullName: string;
+    email: string;
+    phone: string;
+    role: string;
+    language: string;
+  };
+  notifications: {
+    paymentReceived: boolean;
+    paymentOverdue: boolean;
+    newBooking: boolean;
+    maintenanceRequest: boolean;
+    contractExpiring: boolean;
+  };
+}
+
+const defaultSettings: SettingsData = {
+  profile: {
+    fullName: "Alex Rivera",
+    email: "alex@rentflow.com",
+    phone: "+1 (555) 123-4567",
+    role: "Admin",
+    language: "English",
+  },
+  notifications: {
+    paymentReceived: true,
+    paymentOverdue: true,
+    newBooking: true,
+    maintenanceRequest: true,
+    contractExpiring: true,
+  },
+};
+
+function loadSettings(): SettingsData {
+  if (typeof window === "undefined") return defaultSettings;
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? { ...defaultSettings, ...JSON.parse(raw) } : defaultSettings;
+  } catch {
+    return defaultSettings;
+  }
+}
 
 const sidebarTabs = [
   { icon: "person", label: "Profile" },
@@ -23,21 +70,61 @@ const usersData = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("Profile");
+  const [settings, setSettings] = useState<SettingsData>(defaultSettings);
+  const { toast: showToast } = useToast();
+
+  useEffect(() => {
+    setSettings(loadSettings());
+  }, []);
+
+  const updateProfile = (field: keyof SettingsData["profile"], value: string) => {
+    setSettings((prev) => ({
+      ...prev,
+      profile: { ...prev.profile, [field]: value },
+    }));
+  };
+
+  const toggleNotification = (field: keyof SettingsData["notifications"]) => {
+    setSettings((prev) => ({
+      ...prev,
+      notifications: { ...prev.notifications, [field]: !prev.notifications[field] },
+    }));
+  };
+
+  const saveSettings = () => {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    showToast("Settings saved successfully!", "success");
+  };
+
+  const initials = settings.profile.fullName
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  const notifItems: { key: keyof SettingsData["notifications"]; label: string; desc: string }[] = [
+    { key: "paymentReceived", label: "Payment received", desc: "Get notified when a tenant makes a payment" },
+    { key: "paymentOverdue", label: "Payment overdue", desc: "Alert when a payment passes its due date" },
+    { key: "newBooking", label: "New booking", desc: "Notification for new property viewing bookings" },
+    { key: "maintenanceRequest", label: "Maintenance request", desc: "Alert when a new maintenance request is submitted" },
+    { key: "contractExpiring", label: "Contract expiring", desc: "Reminder when a lease is about to expire" },
+  ];
 
   return (
     <>
       <Header title="Settings" subtitle="System configuration and preferences" />
 
-      <div className="p-8">
-        <div className="flex gap-8">
+      <div className="p-4 md:p-8">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-8">
           {/* Sidebar Tabs */}
-          <div className="w-56 flex-shrink-0">
-            <nav className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="w-full md:w-56 flex-shrink-0">
+            <nav className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden flex md:flex-col overflow-x-auto md:overflow-x-visible">
               {sidebarTabs.map((tab) => (
                 <button
                   key={tab.label}
                   onClick={() => setActiveTab(tab.label)}
-                  className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-l-2 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-l-0 md:border-l-2 border-b-2 md:border-b-0 whitespace-nowrap ${
                     activeTab === tab.label
                       ? "bg-primary/5 text-primary border-primary"
                       : "text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200"
@@ -46,7 +133,7 @@ export default function SettingsPage() {
                   <span className={`material-symbols-outlined text-xl ${activeTab === tab.label ? "filled" : ""}`}>
                     {tab.icon}
                   </span>
-                  {tab.label}
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
             </nav>
@@ -55,17 +142,17 @@ export default function SettingsPage() {
           {/* Content Area */}
           <div className="flex-1 min-w-0">
             {activeTab === "Profile" && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-4 md:p-6">
                 <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Profile Settings</h3>
 
                 {/* Avatar */}
                 <div className="flex items-center gap-5 mb-8">
                   <div className="size-20 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-2xl">
-                    AR
+                    {initials}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold dark:text-slate-200">Alex Rivera</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Property Manager</p>
+                    <p className="text-sm font-semibold dark:text-slate-200">{settings.profile.fullName}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{settings.profile.role}</p>
                     <button className="mt-2 text-xs text-primary font-semibold hover:underline">Change Photo</button>
                   </div>
                 </div>
@@ -76,7 +163,8 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name</label>
                     <input
                       type="text"
-                      defaultValue="Alex Rivera"
+                      value={settings.profile.fullName}
+                      onChange={(e) => updateProfile("fullName", e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
@@ -84,7 +172,8 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
                     <input
                       type="email"
-                      defaultValue="alex@rentflow.com"
+                      value={settings.profile.email}
+                      onChange={(e) => updateProfile("email", e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
@@ -92,13 +181,18 @@ export default function SettingsPage() {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Phone</label>
                     <input
                       type="tel"
-                      defaultValue="+1 (555) 123-4567"
+                      value={settings.profile.phone}
+                      onChange={(e) => updateProfile("phone", e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Role</label>
-                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
+                    <select
+                      value={settings.profile.role}
+                      onChange={(e) => updateProfile("role", e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                    >
                       <option>Admin</option>
                       <option>Property Manager</option>
                       <option>Agent</option>
@@ -108,7 +202,11 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Language</label>
-                    <select className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors">
+                    <select
+                      value={settings.profile.language}
+                      onChange={(e) => updateProfile("language", e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                    >
                       <option>English</option>
                       <option>Vietnamese</option>
                       <option>French</option>
@@ -118,7 +216,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="mt-8 flex justify-end">
-                  <button className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+                  <button
+                    onClick={saveSettings}
+                    className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+                  >
                     Save Changes
                   </button>
                 </div>
@@ -126,7 +227,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Company" && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-4 md:p-6">
                 <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Company Information</h3>
 
                 {/* Logo Upload */}
@@ -176,7 +277,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="mt-8 flex justify-end">
-                  <button className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+                  <button
+                    onClick={saveSettings}
+                    className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+                  >
                     Save Changes
                   </button>
                 </div>
@@ -184,78 +288,87 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Notifications" && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-4 md:p-6">
                 <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Notification Preferences</h3>
                 <div className="space-y-5">
-                  {[
-                    { label: "Payment received", desc: "Get notified when a tenant makes a payment" },
-                    { label: "Payment overdue", desc: "Alert when a payment passes its due date" },
-                    { label: "New booking", desc: "Notification for new property viewing bookings" },
-                    { label: "Maintenance request", desc: "Alert when a new maintenance request is submitted" },
-                    { label: "Contract expiring", desc: "Reminder when a lease is about to expire" },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                  {notifItems.map((item) => (
+                    <div key={item.key} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
                       <div>
                         <p className="text-sm font-medium dark:text-slate-200">{item.label}</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{item.desc}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" defaultChecked className="sr-only peer" />
+                        <input
+                          type="checkbox"
+                          checked={settings.notifications[item.key]}
+                          onChange={() => toggleNotification(item.key)}
+                          className="sr-only peer"
+                        />
                         <div className="w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
                       </label>
                     </div>
                   ))}
+                </div>
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={saveSettings}
+                    className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity"
+                  >
+                    Save Preferences
+                  </button>
                 </div>
               </div>
             )}
 
             {activeTab === "Users & Roles" && (
               <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-700">
+                <div className="flex items-center justify-between p-4 md:p-6 border-b border-slate-100 dark:border-slate-700">
                   <h3 className="text-lg font-bold dark:text-slate-200">Users & Roles</h3>
                   <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
                     <span className="material-symbols-outlined text-lg">person_add</span>
-                    Invite User
+                    <span className="hidden sm:inline">Invite User</span>
                   </button>
                 </div>
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                      <th className="text-left py-4 px-6 font-semibold">Name</th>
-                      <th className="text-left py-4 px-6 font-semibold">Email</th>
-                      <th className="text-left py-4 px-6 font-semibold">Role</th>
-                      <th className="text-left py-4 px-6 font-semibold">Status</th>
-                      <th className="text-left py-4 px-6 font-semibold">Last Active</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {usersData.map((u) => (
-                      <tr key={u.email} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
-                        <td className="py-4 px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="size-8 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-xs">
-                              {u.name.split(" ").map((n) => n[0]).join("")}
-                            </div>
-                            <span className="text-sm font-medium dark:text-slate-200">{u.name}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.email}</td>
-                        <td className="py-4 px-6">
-                          <StatusBadge label={u.role} variant={u.role === "Admin" ? "primary" : "neutral"} />
-                        </td>
-                        <td className="py-4 px-6">
-                          <StatusBadge label={u.status} variant={u.status === "Active" ? "success" : "neutral"} dot />
-                        </td>
-                        <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.lastActive}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                        <th className="text-left py-4 px-6 font-semibold">Name</th>
+                        <th className="text-left py-4 px-6 font-semibold">Email</th>
+                        <th className="text-left py-4 px-6 font-semibold">Role</th>
+                        <th className="text-left py-4 px-6 font-semibold">Status</th>
+                        <th className="text-left py-4 px-6 font-semibold">Last Active</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {usersData.map((u) => (
+                        <tr key={u.email} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
+                          <td className="py-4 px-6">
+                            <div className="flex items-center gap-3">
+                              <div className="size-8 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-xs">
+                                {u.name.split(" ").map((n) => n[0]).join("")}
+                              </div>
+                              <span className="text-sm font-medium dark:text-slate-200">{u.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.email}</td>
+                          <td className="py-4 px-6">
+                            <StatusBadge label={u.role} variant={u.role === "Admin" ? "primary" : "neutral"} />
+                          </td>
+                          <td className="py-4 px-6">
+                            <StatusBadge label={u.status} variant={u.status === "Active" ? "success" : "neutral"} dot />
+                          </td>
+                          <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{u.lastActive}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 
             {activeTab === "Billing" && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-4 md:p-6">
                 <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Billing & Subscription</h3>
                 <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-5 border border-primary/10 dark:border-primary/20 mb-6">
                   <div className="flex items-center justify-between">
@@ -273,7 +386,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "Integrations" && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-4 md:p-6">
                 <h3 className="text-lg font-bold dark:text-slate-200 mb-6">Integrations</h3>
                 <div className="space-y-4">
                   {[

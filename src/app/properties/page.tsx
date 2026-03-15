@@ -125,6 +125,7 @@ export default function PropertiesPage() {
 
         {/* Table */}
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
@@ -181,6 +182,7 @@ export default function PropertiesPage() {
               ))}
             </tbody>
           </table>
+          </div>
 
           {/* Pagination */}
           <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
@@ -225,7 +227,7 @@ export default function PropertiesPage() {
         onClose={() => setModal(null)}
         onConfirm={() => { if (modal?.property) { deleteProperty(modal.property.id); toast("Property deleted", "success"); } }}
         title="Delete Property"
-        message={`Are you sure you want to delete "${modal?.property?.name}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete '${modal?.property?.name}'? This action cannot be undone.`}
       />
     </>
   );

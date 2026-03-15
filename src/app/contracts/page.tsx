@@ -146,6 +146,7 @@ export default function ContractsPage() {
 
         {activeTab === "Contracts" && (
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
@@ -190,6 +191,7 @@ export default function ContractsPage() {
                 ))}
               </tbody>
             </table>
+            </div>
             <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
               <Pagination
                 currentPage={currentPage}
@@ -205,6 +207,7 @@ export default function ContractsPage() {
 
         {activeTab === "Payments" && (
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
@@ -231,6 +234,7 @@ export default function ContractsPage() {
                 ))}
               </tbody>
             </table>
+            </div>
             <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700">
               <span className="text-sm text-primary">Showing <strong>{payments.length}</strong> of <strong>124</strong> records</span>
               <div className="flex items-center gap-1">
