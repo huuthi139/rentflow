@@ -2,14 +2,19 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 
-const data = [
-  { name: 'Occupied', value: 87.5 },
-  { name: 'Vacant', value: 12.5 },
-]
-
 const COLORS = ['#0d968b', '#cbd5e1']
 
-export default function OccupancyDonut() {
+interface OccupancyDonutProps {
+  occupancyRate?: number
+}
+
+export default function OccupancyDonut({ occupancyRate = 87.5 }: OccupancyDonutProps) {
+  const rate = Math.round(occupancyRate * 10) / 10
+  const data = [
+    { name: 'Occupied', value: rate },
+    { name: 'Vacant', value: 100 - rate },
+  ]
+
   return (
     <ResponsiveContainer width="100%" height={220}>
       <PieChart>
@@ -29,7 +34,7 @@ export default function OccupancyDonut() {
           ))}
         </Pie>
         <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" className="fill-slate-900 dark:fill-slate-100" style={{ fontSize: '28px', fontWeight: 700 }}>
-          87.5%
+          {rate}%
         </text>
         <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" className="fill-slate-500 dark:fill-slate-400" style={{ fontSize: '12px' }}>
           Occupied

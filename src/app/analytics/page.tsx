@@ -1,20 +1,31 @@
+"use client";
+
+import { useMemo } from "react";
 import Header from "@/components/layout/Header";
 import RevenueTrendChart from "@/components/charts/RevenueTrendChart";
 import ExpensesPieChart from "@/components/charts/ExpensesPieChart";
-import { revenueData, dashboardKPIs, properties } from "@/data/mock";
+import { useData } from "@/lib/store";
+import { revenueData as mockRevenueData } from "@/data/mock";
 
 export default function AnalyticsPage() {
+  const { properties } = useData();
+
+  // Use mock revenue data for charts (historical trend data not available in store)
+  const revenueData = mockRevenueData;
+
   const totalRevenue = revenueData.reduce((s, d) => s + d.revenue, 0);
   const totalExpenses = revenueData.reduce((s, d) => s + d.expenses, 0);
   const totalProfit = totalRevenue - totalExpenses;
 
-  const topProperties = [...properties]
-    .sort((a, b) => b.profit - a.profit)
-    .slice(0, 5);
+  const topProperties = useMemo(() =>
+    [...properties].sort((a, b) => b.profit - a.profit).slice(0, 5),
+    [properties]
+  );
 
-  const highCostProperties = [...properties]
-    .sort((a, b) => b.operatingCost - a.operatingCost)
-    .slice(0, 5);
+  const highCostProperties = useMemo(() =>
+    [...properties].sort((a, b) => b.operatingCost - a.operatingCost).slice(0, 5),
+    [properties]
+  );
 
   return (
     <>
@@ -131,7 +142,7 @@ export default function AnalyticsPage() {
           <div className="grid grid-cols-5 gap-4">
             {(["Available", "Occupied", "Reserved", "Maintenance", "Inactive"] as const).map((status) => {
               const count = properties.filter(p => p.status === status).length;
-              const pct = (count / properties.length) * 100;
+              const pct = properties.length > 0 ? (count / properties.length) * 100 : 0;
               const colors: Record<string, string> = {
                 Available: "bg-emerald-500",
                 Occupied: "bg-blue-500",

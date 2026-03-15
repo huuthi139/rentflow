@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 
 const navItems = [
   { icon: "dashboard", label: "Dashboard", href: "/" },
@@ -30,6 +31,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -111,14 +113,27 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="p-4 border-t border-primary/10 dark:border-slate-700">
         <div className="flex items-center gap-3 p-2">
           <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
-            AR
+            {(user?.user_metadata?.full_name || user?.email || "U")
+              .split(" ")
+              .map((w: string) => w[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate">Alex Rivera</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Property Manager</p>
+            <p className="text-sm font-semibold truncate">
+              {user?.user_metadata?.full_name || user?.email || "User"}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {user?.email || ""}
+            </p>
           </div>
-          <button className="text-slate-400 hover:text-primary transition-colors">
-            <span className="material-symbols-outlined text-xl">settings</span>
+          <button
+            onClick={signOut}
+            className="text-slate-400 hover:text-red-500 transition-colors"
+            title="Sign out"
+          >
+            <span className="material-symbols-outlined text-xl">logout</span>
           </button>
         </div>
       </div>

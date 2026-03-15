@@ -1,12 +1,95 @@
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import StatCard from "@/components/ui/StatCard";
 import RevenueExpensesChart from "@/components/charts/RevenueExpensesChart";
 import OccupancyDonut from "@/components/charts/OccupancyDonut";
-import { dashboardKPIs, leaseExpirations, maintenanceTickets, revenueData } from "@/data/mock";
+import { useData } from "@/lib/store";
+import { getSupabase } from "@/lib/supabase";
+import { revenueData as mockRevenueData, maintenanceTickets as mockMaintenanceTickets } from "@/data/mock";
+import type { MaintenanceTicket } from "@/data/mock";
 
 export default function DashboardPage() {
-  const kpi = dashboardKPIs;
+  const { properties, contracts, loading } = useData();
+  const [maintenanceTickets, setMaintenanceTickets] = useState<MaintenanceTicket[]>(mockMaintenanceTickets);
+  const [maintenanceCount, setMaintenanceCount] = useState<number>(0);
+
+  // Fetch maintenance tickets from Supabase if available
+  useEffect(() => {
+    async function fetchMaintenance() {
+      const sb = getSupabase();
+      if (!sb) {
+        setMaintenanceCount(mockMaintenanceTickets.filter(t => t.status === "Open" || t.status === "In Progress").length);
+        return;
+      }
+      try {
+        const { data, error } = await sb.from("maintenance").select("*").order("created_at", { ascending: false });
+        if (error || !data) {
+          setMaintenanceCount(mockMaintenanceTickets.filter(t => t.status === "Open" || t.status === "In Progress").length);
+          return;
+        }
+        const tickets: MaintenanceTicket[] = data.map((r: any) => ({
+          id: r.id,
+          property: r.property,
+          type: r.type,
+          description: r.description,
+          reportDate: r.report_date,
+          assignee: r.assignee,
+          cost: Number(r.cost),
+          status: r.status,
+          priority: r.priority,
+        }));
+        setMaintenanceTickets(tickets);
+        setMaintenanceCount(tickets.filter(t => t.status === "Open" || t.status === "In Progress").length);
+      } catch {
+        setMaintenanceCount(mockMaintenanceTickets.filter(t => t.status === "Open" || t.status === "In Progress").length);
+      }
+    }
+    fetchMaintenance();
+  }, []);
+
+  // Compute KPIs from real data
+  const kpi = useMemo(() => {
+    const totalProperties = properties.length;
+    const occupied = properties.filter(p => p.status === "Occupied").length;
+    const vacant = properties.filter(p => p.status === "Available").length;
+    const occupancyRate = totalProperties > 0 ? (occupied / totalProperties) * 100 : 0;
+    const totalRevenue = properties.reduce((sum, p) => sum + (p.rentTenant || 0), 0);
+    const monthlyProfit = properties.reduce((sum, p) => sum + (p.profit || 0), 0);
+
+    return {
+      totalProperties,
+      occupied,
+      vacant,
+      occupancyRate,
+      totalRevenue,
+      monthlyProfit,
+      maintenanceTickets: maintenanceCount,
+    };
+  }, [properties, maintenanceCount]);
+
+  // Derive lease expirations from contracts ending within 30 days or marked "Ending Soon"
+  const leaseExpirations = useMemo(() => {
+    const now = new Date();
+    return contracts
+      .map((c) => {
+        const endDate = new Date(c.endDate);
+        const diffMs = endDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        return {
+          tenant: c.tenant,
+          property: c.property,
+          expiryDate: c.endDate,
+          daysLeft,
+          status: c.status,
+        };
+      })
+      .filter((l) => l.status === "Ending Soon" || (l.daysLeft >= 0 && l.daysLeft <= 30))
+      .sort((a, b) => a.daysLeft - b.daysLeft)
+      .slice(0, 5);
+  }, [contracts]);
 
   return (
     <>
@@ -29,12 +112,12 @@ export default function DashboardPage() {
       <div className="p-8 space-y-8">
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <StatCard label="Total Properties" value={kpi.totalProperties.toLocaleString()} change={kpi.totalPropertiesChange} icon="home_work" />
-          <StatCard label="Occupied" value={kpi.occupied.toLocaleString()} change={kpi.occupiedChange} icon="meeting_room" />
-          <StatCard label="Vacant" value={kpi.vacant.toString()} change={kpi.vacantChange} icon="door_open" />
-          <StatCard label="Total Revenue" value={`$${(kpi.totalRevenue / 1000).toFixed(0)}k`} change={kpi.revenueChange} icon="attach_money" />
-          <StatCard label="Monthly Profit" value={`$${(kpi.monthlyProfit / 1000).toFixed(0)}k`} change={kpi.profitChange} icon="trending_up" />
-          <StatCard label="Maint. Tickets" value={kpi.maintenanceTickets.toString()} change={kpi.maintenanceChange} icon="build" iconColor="text-amber-500" />
+          <StatCard label="Total Properties" value={kpi.totalProperties.toLocaleString()} icon="home_work" />
+          <StatCard label="Occupied" value={kpi.occupied.toLocaleString()} icon="meeting_room" />
+          <StatCard label="Vacant" value={kpi.vacant.toString()} icon="door_open" />
+          <StatCard label="Total Revenue" value={`$${(kpi.totalRevenue / 1000).toFixed(0)}k`} icon="attach_money" />
+          <StatCard label="Monthly Profit" value={`$${(kpi.monthlyProfit / 1000).toFixed(0)}k`} icon="trending_up" />
+          <StatCard label="Maint. Tickets" value={kpi.maintenanceTickets.toString()} icon="build" iconColor="text-amber-500" />
         </div>
 
         {/* Charts Row */}
@@ -54,23 +137,26 @@ export default function DashboardPage() {
                 </span>
               </div>
             </div>
-            <RevenueExpensesChart data={revenueData} />
+            <RevenueExpensesChart data={mockRevenueData} />
           </div>
 
           {/* Occupancy Rate */}
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 p-6 shadow-sm">
             <h3 className="text-lg font-bold mb-2">Occupancy Rate</h3>
-            <OccupancyDonut />
+            <OccupancyDonut occupancyRate={kpi.occupancyRate} />
             <div className="space-y-2 mt-2">
-              {["Q1", "Q2", "Q3", "Q4"].map((q, i) => (
-                <div key={q} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">{q}</span>
-                  <div className="w-32 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary rounded-full" style={{ width: `${75 + i * 5}%` }} />
+              {["Q1", "Q2", "Q3", "Q4"].map((q, i) => {
+                const qRate = Math.min(kpi.occupancyRate + (i - 1) * 3, 100);
+                return (
+                  <div key={q} className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500 dark:text-slate-400">{q}</span>
+                    <div className="w-32 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${qRate}%` }} />
+                    </div>
+                    <span className="font-medium">{qRate.toFixed(0)}%</span>
                   </div>
-                  <span className="font-medium">{75 + i * 5}%</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -94,6 +180,11 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
+                {leaseExpirations.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-6 text-center text-sm text-slate-400">No upcoming lease expirations</td>
+                  </tr>
+                )}
                 {leaseExpirations.map((lease, i) => (
                   <tr key={i} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
                     <td className="py-3">

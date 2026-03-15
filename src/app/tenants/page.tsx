@@ -1,34 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import StatusBadge, { getStatusVariant } from "@/components/ui/StatusBadge";
 import StatCard from "@/components/ui/StatCard";
 import Modal from "@/components/ui/Modal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import Pagination from "@/components/ui/Pagination";
 import TenantForm from "@/components/crud/TenantForm";
 import { useData } from "@/lib/store";
 import { useToast } from "@/components/ui/Toast";
 import { exportToCSV } from "@/lib/export";
-import { tenantStats } from "@/data/mock";
 import type { Tenant } from "@/data/mock";
 
 const tabs = ["All Records", "Leads", "Active Tenants", "Former Tenants"];
+const ITEMS_PER_PAGE = 10;
 
 export default function TenantsPage() {
   const { tenants, addTenant, updateTenant, deleteTenant } = useData();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("All Records");
   const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; tenant?: Tenant } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredTenants = tenants.filter((t) => {
-    if (activeTab === "All Records") return true;
-    if (activeTab === "Leads") return t.status === "Lead" || t.status === "Interested" || t.status === "Viewing";
-    if (activeTab === "Active Tenants") return t.status === "Active" || t.status === "Overdue";
-    if (activeTab === "Former Tenants") return t.status === "Former";
-    return true;
-  });
+  const filteredTenants = useMemo(() => {
+    return tenants.filter((t) => {
+      // Tab filter
+      if (activeTab === "Leads" && t.status !== "Lead" && t.status !== "Interested" && t.status !== "Viewing") return false;
+      if (activeTab === "Active Tenants" && t.status !== "Active" && t.status !== "Overdue") return false;
+      if (activeTab === "Former Tenants" && t.status !== "Former") return false;
+
+      // Search filter
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        if (!t.name.toLowerCase().includes(q) && !t.email.toLowerCase().includes(q)) return false;
+      }
+
+      return true;
+    });
+  }, [tenants, activeTab, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredTenants.length / ITEMS_PER_PAGE);
+  const paginatedTenants = filteredTenants.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleTabChange = (tab: string) => { setActiveTab(tab); setCurrentPage(1); };
+  const handleSearchChange = (val: string) => { setSearchQuery(val); setCurrentPage(1); };
 
   return (
     <>
@@ -61,27 +83,47 @@ export default function TenantsPage() {
 
       <div className="p-8 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard label="Total Leads" value={tenantStats.totalLeads.toString()} change={tenantStats.leadsChange} changeLabel="from last month" icon="person_search" />
-          <StatCard label="Active Tenants" value={tenantStats.activeTenants.toString()} changeLabel={`${tenantStats.occupancyRate}% Occupancy Rate`} icon="person_pin" />
-          <StatCard label="Pending Apps" value={tenantStats.pendingApps.toString()} changeLabel={`${tenantStats.highPriority} high priority`} icon="hourglass_empty" iconColor="text-amber-500" />
-        </div>
+        {(() => {
+          const totalLeads = tenants.filter(t => t.status === "Lead" || t.status === "Interested" || t.status === "Viewing").length;
+          const activeTenants = tenants.filter(t => t.status === "Active").length;
+          const pendingApps = tenants.filter(t => t.status === "Interested" || t.status === "Viewing").length;
+          const occupancyRate = tenants.length > 0 ? Math.round((activeTenants / tenants.length) * 100) : 0;
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatCard label="Total Leads" value={totalLeads.toString()} changeLabel="from current data" icon="person_search" />
+              <StatCard label="Active Tenants" value={activeTenants.toString()} changeLabel={`${occupancyRate}% Occupancy Rate`} icon="person_pin" />
+              <StatCard label="Pending Apps" value={pendingApps.toString()} changeLabel={`${pendingApps} pending review`} icon="hourglass_empty" iconColor="text-amber-500" />
+            </div>
+          );
+        })()}
 
-        {/* Tabs */}
-        <div className="flex items-center gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
-                activeTab === tab
-                  ? "bg-primary text-white"
-                  : "bg-white dark:bg-slate-800 border border-primary/10 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-primary/5"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        {/* Tabs & Search */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => handleTabChange(tab)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
+                  activeTab === tab
+                    ? "bg-primary text-white"
+                    : "bg-white dark:bg-slate-800 border border-primary/10 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-primary/5"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <div className="relative">
+            <span className="material-symbols-outlined text-lg text-slate-400 absolute left-3 top-1/2 -translate-y-1/2">search</span>
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-10 pr-4 py-2 text-sm border border-primary/10 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary w-64"
+            />
+          </div>
         </div>
 
         {/* Table */}
@@ -99,7 +141,7 @@ export default function TenantsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredTenants.map((tenant) => (
+              {paginatedTenants.map((tenant) => (
                 <tr key={tenant.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
@@ -156,11 +198,15 @@ export default function TenantsPage() {
             </tbody>
           </table>
 
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700">
-            <span className="text-sm text-primary">Showing <strong>1-{filteredTenants.length}</strong> of <strong>{tenants.length}</strong> tenants</span>
-            <div className="flex items-center gap-1">
-              <button className="size-9 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">1</button>
-            </div>
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredTenants.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setCurrentPage}
+              label="tenants"
+            />
           </div>
         </div>
       </div>

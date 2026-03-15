@@ -4,6 +4,8 @@ import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import { DataProvider } from "@/lib/store";
 import { ToastProvider } from "@/components/ui/Toast";
+import { AuthProvider } from "@/lib/auth";
+import AuthGuard from "@/components/layout/AuthGuard";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,7 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-display bg-background-light dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased`}>
-        <DataProvider><ToastProvider><AppShell>{children}</AppShell></ToastProvider></DataProvider>
+        <DataProvider><AuthProvider><ToastProvider><AuthGuard><AppShell>{children}</AppShell></AuthGuard></ToastProvider></AuthProvider></DataProvider>
       </body>
     </html>
   );

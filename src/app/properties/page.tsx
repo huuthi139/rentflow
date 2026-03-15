@@ -1,21 +1,60 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import StatusBadge, { getStatusVariant } from "@/components/ui/StatusBadge";
 import Modal from "@/components/ui/Modal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import Pagination from "@/components/ui/Pagination";
 import PropertyForm from "@/components/crud/PropertyForm";
 import { useData } from "@/lib/store";
 import { useToast } from "@/components/ui/Toast";
 import { exportToCSV } from "@/lib/export";
 import type { Property } from "@/data/mock";
 
+const ITEMS_PER_PAGE = 10;
+
 export default function PropertiesPage() {
   const { properties, addProperty, updateProperty, deleteProperty } = useData();
   const { toast } = useToast();
   const [modal, setModal] = useState<{ mode: 'add' | 'edit' | 'delete'; property?: Property } | null>(null);
+
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [buildingFilter, setBuildingFilter] = useState("All");
+  const [priceFilter, setPriceFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Unique buildings from data
+  const uniqueBuildings = useMemo(() => {
+    const set = new Set(properties.map(p => p.building));
+    return Array.from(set).sort();
+  }, [properties]);
+
+  // Filtered properties
+  const filteredProperties = useMemo(() => {
+    return properties.filter(p => {
+      if (statusFilter !== "All" && p.status !== statusFilter) return false;
+      if (buildingFilter !== "All" && p.building !== buildingFilter) return false;
+      if (priceFilter === "Under $1,500" && p.rentTenant >= 1500) return false;
+      if (priceFilter === "$1,500 - $3,000" && (p.rentTenant < 1500 || p.rentTenant > 3000)) return false;
+      if (priceFilter === "Over $3,000" && p.rentTenant <= 3000) return false;
+      return true;
+    });
+  }, [properties, statusFilter, buildingFilter, priceFilter]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
+  const paginatedProperties = filteredProperties.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page when filters change
+  const handleStatusChange = (val: string) => { setStatusFilter(val); setCurrentPage(1); };
+  const handleBuildingChange = (val: string) => { setBuildingFilter(val); setCurrentPage(1); };
+  const handlePriceChange = (val: string) => { setPriceFilter(val); setCurrentPage(1); };
 
   return (
     <>
@@ -49,21 +88,39 @@ export default function PropertiesPage() {
               <span className="material-symbols-outlined text-sm">tune</span>
               Filters:
             </span>
-            <select className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary">
-              <option>Status: All</option>
-              <option>Available</option>
-              <option>Occupied</option>
-              <option>Reserved</option>
-              <option>Maintenance</option>
+            <select
+              value={statusFilter}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            >
+              <option value="All">Status: All</option>
+              <option value="Available">Available</option>
+              <option value="Occupied">Occupied</option>
+              <option value="Reserved">Reserved</option>
+              <option value="Maintenance">Maintenance</option>
             </select>
-            <select className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary">
-              <option>Building</option>
+            <select
+              value={buildingFilter}
+              onChange={(e) => handleBuildingChange(e.target.value)}
+              className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            >
+              <option value="All">Building: All</option>
+              {uniqueBuildings.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
             </select>
-            <select className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary">
-              <option>Price Range</option>
+            <select
+              value={priceFilter}
+              onChange={(e) => handlePriceChange(e.target.value)}
+              className="text-sm border border-primary/10 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            >
+              <option value="All">Price Range: All</option>
+              <option value="Under $1,500">Under $1,500</option>
+              <option value="$1,500 - $3,000">$1,500 - $3,000</option>
+              <option value="Over $3,000">Over $3,000</option>
             </select>
           </div>
-          <span className="text-sm text-primary font-medium">{properties.length} Units Found</span>
+          <span className="text-sm text-primary font-medium">{filteredProperties.length} Units Found</span>
         </div>
 
         {/* Table */}
@@ -81,7 +138,7 @@ export default function PropertiesPage() {
               </tr>
             </thead>
             <tbody>
-              {properties.map((prop) => (
+              {paginatedProperties.map((prop) => (
                 <tr key={prop.id} className="border-b border-slate-50 dark:border-slate-700/50 hover:bg-primary/[0.02] dark:hover:bg-primary/5 transition-colors">
                   <td className="py-4 px-6">
                     <Link href={`/properties/${prop.id}`} className="text-sm font-semibold text-primary hover:underline">
@@ -126,11 +183,15 @@ export default function PropertiesPage() {
           </table>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700">
-            <span className="text-sm text-primary">Showing <strong>1 to {properties.length}</strong> of <strong>{properties.length}</strong> results</span>
-            <div className="flex items-center gap-1">
-              <button className="size-9 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">1</button>
-            </div>
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredProperties.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setCurrentPage}
+              label="results"
+            />
           </div>
         </div>
       </div>

@@ -2,17 +2,35 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/Toast";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { signUp } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) return alert("Passwords don't match");
+    setError(null);
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => { window.location.href = "/"; }, 1000);
+    const result = await signUp(form.email, form.password, form.name);
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      toast("Account created! Check your email to verify.", "success");
+      router.push("/login");
+    }
   };
 
   const update = (key: string, val: string) => setForm({ ...form, [key]: val });
@@ -36,6 +54,13 @@ export default function RegisterPage() {
 
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Create account</h2>
+
+          {error && (
+            <div className="mb-4 flex items-center gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <span className="material-symbols-outlined text-red-500 text-lg">error</span>
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

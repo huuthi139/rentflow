@@ -2,20 +2,29 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { signIn } = useAuth();
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    // Simulate login
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 1000);
+    const result = await signIn(email, password);
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      router.push("/");
+    }
   };
 
   return (
@@ -55,6 +64,13 @@ export default function LoginPage() {
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200 dark:border-slate-700" /></div>
             <div className="relative flex justify-center text-xs"><span className="px-3 bg-white dark:bg-slate-800 text-slate-400">or continue with email</span></div>
           </div>
+
+          {error && (
+            <div className="mb-4 flex items-center gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <span className="material-symbols-outlined text-red-500 text-lg">error</span>
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
