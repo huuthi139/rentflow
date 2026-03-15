@@ -59,3 +59,12 @@
   background-color: var(--color-background-dark);
   color: #e2e8f0;
 }
+
+/* Dark scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}

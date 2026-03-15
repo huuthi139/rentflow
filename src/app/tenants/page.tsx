@@ -27,11 +27,11 @@ export default function TenantsPage() {
         subtitle="Manage leads, active tenants, and historical records."
         actions={
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary/5 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors">
               <span className="material-symbols-outlined text-lg">tune</span>
               Filter Status
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 rounded-lg text-sm font-medium text-slate-600 hover:bg-primary/5 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 border border-primary/10 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-primary/5 transition-colors">
               <span className="material-symbols-outlined text-lg">download</span>
               Export
             </button>
@@ -60,7 +60,7 @@ export default function TenantsPage() {
               className={`px-4 py-2 rounded-full text-sm font-bold transition-colors ${
                 activeTab === tab
                   ? "bg-primary text-white"
-                  : "bg-white border border-primary/10 text-slate-600 hover:bg-primary/5"
+                  : "bg-white dark:bg-slate-800 border border-primary/10 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-primary/5"
               }`}
             >
               {tab}
@@ -69,10 +69,10 @@ export default function TenantsPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 bg-slate-50/50">
+              <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                 <th className="text-left py-4 px-6 font-semibold">Tenant Name</th>
                 <th className="text-left py-4 px-6 font-semibold">Contact Info</th>
                 <th className="text-left py-4 px-6 font-semibold">Property</th>
@@ -84,7 +84,7 @@ export default function TenantsPage() {
             </thead>
             <tbody>
               {filteredTenants.map((tenant) => (
-                <tr key={tenant.id} className="border-b border-slate-50 hover:bg-primary/[0.02] transition-colors">
+                <tr key={tenant.id} className="border-b border-slate-50 dark:border-slate-700 hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
                       <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold shrink-0">
@@ -92,17 +92,17 @@ export default function TenantsPage() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold">{tenant.name}</p>
-                        <p className="text-xs text-slate-500">ID: {tenant.id}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">ID: {tenant.id}</p>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 px-6">
                     <p className="text-sm">{tenant.email}</p>
-                    <p className="text-xs text-slate-500">{tenant.phone}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{tenant.phone}</p>
                   </td>
                   <td className="py-4 px-6">
                     <p className="text-sm font-medium">{tenant.property}</p>
-                    <p className="text-xs text-slate-500">{tenant.propertyType}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{tenant.propertyType}</p>
                   </td>
                   <td className="py-4 px-6">
                     <StatusBadge label={tenant.status} variant={getStatusVariant(tenant.status)} />
@@ -117,17 +117,17 @@ export default function TenantsPage() {
                       <span className={`text-sm font-medium ${
                         tenant.payment === "Paid" ? "text-emerald-600" :
                         tenant.payment === "Unpaid" ? "text-red-500" :
-                        "text-slate-500"
+                        "text-slate-500 dark:text-slate-400"
                       }`}>{tenant.payment}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-sm text-slate-600">{tenant.contractEnd}</td>
+                  <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400">{tenant.contractEnd}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
                       <Link href={`/tenants/${tenant.id}`} className="size-8 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors">
                         <span className="material-symbols-outlined text-lg">visibility</span>
                       </Link>
-                      <button className="size-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+                      <button className="size-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                         <span className="material-symbols-outlined text-lg">edit</span>
                       </button>
                     </div>
@@ -137,13 +137,13 @@ export default function TenantsPage() {
             </tbody>
           </table>
 
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-700">
             <span className="text-sm text-primary">Showing <strong>1-10</strong> of <strong>856</strong> tenants</span>
             <div className="flex items-center gap-1">
               <button className="size-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-primary/5 text-sm">&lsaquo;</button>
               <button className="size-9 flex items-center justify-center rounded-lg bg-primary text-white text-sm font-bold">1</button>
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 hover:bg-primary/5 text-sm">2</button>
-              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 hover:bg-primary/5 text-sm">3</button>
+              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 text-sm">2</button>
+              <button className="size-9 flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 text-sm">3</button>
               <button className="size-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-primary/5 text-sm">&rsaquo;</button>
             </div>
           </div>

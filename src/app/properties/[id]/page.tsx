@@ -45,20 +45,17 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   const property = properties.find((p) => p.id === id);
 
-  // Fallback static data if property not found in mock
   const propName = property?.name ?? "Unit 402 - Landmark Tower";
   const propBuilding = property?.building ?? "Landmark Tower";
   const propLocation = property?.location ?? "Metropolis";
   const propStatus = property?.status ?? "Available";
 
-  // Find tenants related to this property (match by building name loosely)
   const relatedTenants = tenants.filter(
     (t) =>
       (property && t.property.toLowerCase().includes(property.building.toLowerCase().split(" ")[0])) ||
       (property && t.property.toLowerCase().includes(property.name.toLowerCase().split(" ")[0]))
   );
 
-  // Find maintenance tickets related to this property
   const relatedTickets = maintenanceTickets.filter(
     (t) =>
       (property && t.property.toLowerCase().includes(property.building.toLowerCase().split(" ")[0])) ||
@@ -78,7 +75,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           <span className="material-symbols-outlined text-xs">chevron_right</span>
           <span className="hover:text-primary transition-colors">{propBuilding}</span>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="text-slate-900 font-medium">{propName}</span>
+          <span className="text-slate-900 dark:text-slate-100 font-medium">{propName}</span>
         </nav>
 
         {/* Header Section */}
@@ -94,7 +91,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             <h2 className="text-3xl md:text-4xl font-black tracking-tight">{propName}</h2>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg border border-primary/20 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 rounded-lg border border-primary/20 dark:border-slate-600 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">edit</span>
               Edit Property
             </button>
@@ -106,7 +103,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-primary/10">
+        <div className="border-b border-primary/10 dark:border-slate-700">
           <div className="flex gap-8">
             {tabs.map((tab) => (
               <button
@@ -132,7 +129,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             {activeTab === "Overview" && (
               <>
                 {/* Property Details Grid */}
-                <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">apartment</span>
                     Property Details
@@ -150,14 +147,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         <p className="text-xs font-semibold text-primary/50 uppercase tracking-wider mb-1">
                           {item.label}
                         </p>
-                        <p className="text-sm font-semibold text-slate-800">{item.value}</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{item.value}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Financial Info */}
-                <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">account_balance</span>
                     Financial Information
@@ -191,12 +188,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     ].map((item) => (
                       <div
                         key={item.label}
-                        className="p-4 rounded-xl bg-slate-50 flex items-center gap-3"
+                        className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center gap-3"
                       >
                         <span className={`material-symbols-outlined ${item.color}`}>{item.icon}</span>
                         <div>
                           <p className="text-xs text-primary/50 font-medium">{item.label}</p>
-                          <p className={`text-lg font-bold ${item.label === "Monthly Profit" ? item.color : "text-slate-800"}`}>
+                          <p className={`text-lg font-bold ${item.label === "Monthly Profit" ? item.color : "text-slate-800 dark:text-slate-200"}`}>
                             {item.value}
                           </p>
                         </div>
@@ -206,12 +203,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 </div>
 
                 {/* Description */}
-                <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">description</span>
                     Description
                   </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                     This beautifully appointed property offers modern living at its finest. Featuring high-quality
                     finishes throughout, the unit boasts an open-plan living and dining area with floor-to-ceiling
                     windows that flood the space with natural light and provide stunning views. The fully equipped
@@ -241,7 +238,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       {room.photos.map((photo, i) => (
                         <div
                           key={i}
-                          className="aspect-[4/3] rounded-xl bg-slate-200 bg-cover bg-center cursor-pointer hover:opacity-90 transition-opacity"
+                          className="aspect-[4/3] rounded-xl bg-slate-200 dark:bg-slate-700 bg-cover bg-center cursor-pointer hover:opacity-90 transition-opacity"
                           style={{ backgroundImage: `url(${photo})` }}
                         />
                       ))}
@@ -259,7 +256,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
             {/* ===== TENANTS TAB ===== */}
             {activeTab === "Tenants" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">group</span>
                   Tenants
@@ -276,13 +273,13 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                         <Link
                           key={t.id}
                           href={`/tenants/${t.id}`}
-                          className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                          className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                         >
                           <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-black shrink-0">
                             {initials}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-slate-800">{t.name}</p>
+                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t.name}</p>
                             <p className="text-xs text-primary/50">
                               {t.property} &middot; {t.propertyType}
                             </p>
@@ -296,7 +293,6 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Static fallback tenants */}
                     {[
                       { name: "Sarah Jenkins", status: "Active", property: "Unit 402", period: "Jan 2024 - Dec 2024" },
                       { name: "David Thompson", status: "Former", property: "Unit 402", period: "Mar 2022 - Dec 2023" },
@@ -305,13 +301,13 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       return (
                         <div
                           key={t.name}
-                          className="flex items-center gap-4 p-4 rounded-xl bg-slate-50"
+                          className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900"
                         >
                           <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-black shrink-0">
                             {initials}
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-bold text-slate-800">{t.name}</p>
+                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t.name}</p>
                             <p className="text-xs text-primary/50">
                               {t.property} &middot; {t.period}
                             </p>
@@ -327,7 +323,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
             {/* ===== HANDOVER REPORTS TAB ===== */}
             {activeTab === "Handover Reports" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">fact_check</span>
                   Handover Reports
@@ -341,12 +337,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   ].map((report) => (
                     <div
                       key={report.title}
-                      className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <span className="material-symbols-outlined text-primary">{report.icon}</span>
                         <div>
-                          <p className="text-sm font-semibold text-slate-800">{report.title}</p>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{report.title}</p>
                           <p className="text-xs text-primary/50">{report.date}</p>
                         </div>
                       </div>
@@ -359,7 +355,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
             {/* ===== MAINTENANCE HISTORY TAB ===== */}
             {activeTab === "Maintenance History" && (
-              <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm p-6">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">build</span>
                   Maintenance History
@@ -368,7 +364,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-primary/10">
+                        <tr className="border-b border-primary/10 dark:border-slate-700">
                           <th className="text-left pb-3 text-xs font-bold uppercase tracking-wider text-primary/50">ID</th>
                           <th className="text-left pb-3 text-xs font-bold uppercase tracking-wider text-primary/50">Type</th>
                           <th className="text-left pb-3 text-xs font-bold uppercase tracking-wider text-primary/50">Description</th>
@@ -380,7 +376,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                       </thead>
                       <tbody>
                         {relatedTickets.map((ticket) => (
-                          <tr key={ticket.id} className="border-b border-primary/5 last:border-0">
+                          <tr key={ticket.id} className="border-b border-primary/5 dark:border-slate-700 last:border-0">
                             <td className="py-3 font-semibold">{ticket.id}</td>
                             <td className="py-3">{ticket.type}</td>
                             <td className="py-3 max-w-[200px] truncate">{ticket.description}</td>
@@ -399,7 +395,6 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Static fallback maintenance items */}
                     {[
                       { id: "MT-101", type: "Plumbing", desc: "Kitchen faucet replacement", date: "Sep 20, 2023", cost: 180, priority: "Medium", status: "Closed" },
                       { id: "MT-087", type: "Electrical", desc: "Circuit breaker reset", date: "Jul 12, 2023", cost: 100, priority: "High", status: "Closed" },
@@ -407,12 +402,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     ].map((ticket) => (
                       <div
                         key={ticket.id}
-                        className="flex items-center justify-between p-4 rounded-xl bg-slate-50"
+                        className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-900"
                       >
                         <div className="flex items-center gap-3">
                           <span className="material-symbols-outlined text-primary">build_circle</span>
                           <div>
-                            <p className="text-sm font-semibold text-slate-800">
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                               {ticket.id} &middot; {ticket.type}
                             </p>
                             <p className="text-xs text-primary/50">
@@ -435,7 +430,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           {/* Sidebar Info */}
           <div className="lg:col-span-4 space-y-6">
             {/* Handover Status */}
-            <div className="bg-white rounded-xl border border-primary/10 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Handover Status</h3>
                 <span className="material-symbols-outlined text-primary">verified</span>
@@ -445,7 +440,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   <span className="material-symbols-outlined text-primary">check_circle</span>
                   <div>
                     <p className="text-sm font-semibold">Handover Checklist</p>
-                    <p className="text-xs text-slate-500">Completed on Oct 12, 2023</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Completed on Oct 12, 2023</p>
                   </div>
                 </div>
                 <div>
@@ -453,20 +448,20 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     <span className="font-semibold">Inspection Progress</span>
                     <span className="font-bold">100%</span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div className="h-full bg-primary rounded-full" style={{ width: "100%" }} />
                   </div>
                 </div>
-                <button className="w-full py-2.5 border border-primary/20 rounded-lg text-sm font-bold text-slate-700 hover:bg-primary/5 transition-colors">
+                <button className="w-full py-2.5 border border-primary/20 dark:border-slate-600 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-primary/5 transition-colors">
                   View Full Report
                 </button>
               </div>
             </div>
 
             {/* Location */}
-            <div className="bg-white rounded-xl border border-primary/10 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 p-6 shadow-sm">
               <h3 className="text-lg font-bold mb-4">Location</h3>
-              <div className="aspect-[4/3] rounded-xl bg-slate-200 mb-3 flex items-center justify-center">
+              <div className="aspect-[4/3] rounded-xl bg-slate-200 dark:bg-slate-700 mb-3 flex items-center justify-center">
                 <span className="material-symbols-outlined text-4xl text-slate-400">map</span>
               </div>
               <p className="text-sm font-semibold">{propName}</p>
@@ -487,7 +482,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 >
                   <span className="material-symbols-outlined text-primary">{item.icon}</span>
                   <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
-                  <span className="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors text-lg">
+                  <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors text-lg">
                     chevron_right
                   </span>
                 </button>

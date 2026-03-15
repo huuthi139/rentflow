@@ -1,4 +1,6 @@
 import Header from "@/components/layout/Header";
+import RevenueTrendChart from "@/components/charts/RevenueTrendChart";
+import ExpensesPieChart from "@/components/charts/ExpensesPieChart";
 import { revenueData, dashboardKPIs, properties } from "@/data/mock";
 
 export default function AnalyticsPage() {
@@ -65,42 +67,13 @@ export default function AnalyticsPage() {
           {/* Monthly Revenue */}
           <div className="bg-white rounded-xl border border-primary/10 p-6 shadow-sm">
             <h3 className="text-lg font-bold mb-6">Monthly Revenue Trend</h3>
-            <div className="flex items-end gap-3 h-48">
-              {revenueData.map((d) => (
-                <div key={d.month} className="flex-1 flex flex-col items-center gap-2">
-                  <div className="w-full flex items-end justify-center h-40">
-                    <div
-                      className="w-8 bg-primary/80 rounded-t-sm hover:bg-primary transition-colors"
-                      style={{ height: `${(d.revenue / 130000) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-xs text-slate-500">{d.month}</span>
-                  <span className="text-[10px] font-bold text-primary">${(d.revenue / 1000).toFixed(0)}k</span>
-                </div>
-              ))}
-            </div>
+            <RevenueTrendChart data={revenueData} />
           </div>
 
           {/* Profit Margin */}
           <div className="bg-white rounded-xl border border-primary/10 p-6 shadow-sm">
             <h3 className="text-lg font-bold mb-6">Profit Margin by Month</h3>
-            <div className="flex items-end gap-3 h-48">
-              {revenueData.map((d) => {
-                const margin = ((d.revenue - d.expenses) / d.revenue) * 100;
-                return (
-                  <div key={d.month} className="flex-1 flex flex-col items-center gap-2">
-                    <div className="w-full flex items-end justify-center h-40">
-                      <div
-                        className="w-8 bg-emerald-500/80 rounded-t-sm hover:bg-emerald-500 transition-colors"
-                        style={{ height: `${margin}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-slate-500">{d.month}</span>
-                    <span className="text-[10px] font-bold text-emerald-600">{margin.toFixed(0)}%</span>
-                  </div>
-                );
-              })}
-            </div>
+            <ExpensesPieChart />
           </div>
         </div>
 

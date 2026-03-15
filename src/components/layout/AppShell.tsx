@@ -15,11 +15,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background-light dark:bg-slate-900">
       {/* Mobile hamburger button */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 bg-white rounded-lg shadow-md border border-primary/10 text-slate-600 hover:text-primary transition-colors"
+        className="fixed top-4 left-4 z-50 md:hidden p-2 bg-white dark:bg-slate-800 rounded-lg shadow-md border border-primary/10 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"
         aria-label="Toggle menu"
       >
         <span className="material-symbols-outlined text-2xl">menu</span>

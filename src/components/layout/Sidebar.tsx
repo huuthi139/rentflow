@@ -39,7 +39,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={`
-        w-64 flex-shrink-0 border-r border-primary/10 bg-white flex flex-col h-screen
+        w-64 flex-shrink-0 border-r border-primary/10 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col h-screen
         fixed md:sticky top-0 z-40 md:z-auto
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
@@ -75,7 +75,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
               isActive(item.href)
                 ? "bg-primary/10 text-primary"
-                : "text-slate-600 hover:bg-primary/5 hover:text-primary"
+                : "text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary"
             }`}
           >
             <span
@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
               isActive(item.href)
                 ? "bg-primary/10 text-primary"
-                : "text-slate-600 hover:bg-primary/5 hover:text-primary"
+                : "text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary"
             }`}
           >
             <span className="material-symbols-outlined text-xl">{item.icon}</span>
@@ -108,14 +108,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       </nav>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-primary/10">
+      <div className="p-4 border-t border-primary/10 dark:border-slate-700">
         <div className="flex items-center gap-3 p-2">
           <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
             AR
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate">Alex Rivera</p>
-            <p className="text-xs text-slate-500 truncate">Property Manager</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Property Manager</p>
           </div>
           <button className="text-slate-400 hover:text-primary transition-colors">
             <span className="material-symbols-outlined text-xl">settings</span>

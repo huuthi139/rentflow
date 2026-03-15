@@ -21,11 +21,11 @@ export default function DataTable<T extends Record<string, unknown>>({
   onRowClick,
 }: DataTableProps<T>) {
   return (
-    <div className="bg-white rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-primary/10 dark:border-slate-700 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-slate-50/50">
+            <tr className="bg-slate-50/50 dark:bg-slate-900/50">
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -41,14 +41,14 @@ export default function DataTable<T extends Record<string, unknown>>({
               <tr
                 key={rowIndex}
                 onClick={() => onRowClick?.(item)}
-                className={`border-b border-slate-50 transition-colors hover:bg-primary/[0.02] ${
+                className={`border-b border-slate-50 dark:border-slate-700 transition-colors hover:bg-primary/[0.02] dark:hover:bg-slate-700/50 ${
                   onRowClick ? "cursor-pointer" : ""
                 }`}
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`px-5 py-4 text-sm text-slate-700 ${col.className || ""}`}
+                    className={`px-5 py-4 text-sm text-slate-700 dark:text-slate-300 ${col.className || ""}`}
                   >
                     {col.render
                       ? col.render(item)

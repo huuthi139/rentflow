@@ -13,8 +13,8 @@ export default function EmptyState({ icon, title, description, action }: EmptySt
       <div className="flex items-center justify-center size-16 rounded-2xl bg-primary/10 mb-5">
         <span className="material-symbols-outlined text-3xl text-primary">{icon}</span>
       </div>
-      <h3 className="text-lg font-semibold text-slate-800 mb-1">{title}</h3>
-      <p className="text-sm text-slate-500 max-w-sm mb-6">{description}</p>
+      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-1">{title}</h3>
+      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">{description}</p>
       {action && (
         <button
           onClick={action.onClick}

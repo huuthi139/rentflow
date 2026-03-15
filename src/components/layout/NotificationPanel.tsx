@@ -12,11 +12,11 @@ const notifications = [
 ];
 
 const typeStyles: Record<string, { bg: string; text: string; icon: string }> = {
-  payment: { bg: "bg-emerald-100", text: "text-emerald-600", icon: "payments" },
-  maintenance: { bg: "bg-red-100", text: "text-red-600", icon: "build" },
-  contract: { bg: "bg-amber-100", text: "text-amber-600", icon: "description" },
-  lead: { bg: "bg-blue-100", text: "text-blue-600", icon: "person_add" },
-  booking: { bg: "bg-purple-100", text: "text-purple-600", icon: "calendar_month" },
+  payment: { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-600 dark:text-emerald-400", icon: "payments" },
+  maintenance: { bg: "bg-red-100 dark:bg-red-900/30", text: "text-red-600 dark:text-red-400", icon: "build" },
+  contract: { bg: "bg-amber-100 dark:bg-amber-900/30", text: "text-amber-600 dark:text-amber-400", icon: "description" },
+  lead: { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-600 dark:text-blue-400", icon: "person_add" },
+  booking: { bg: "bg-purple-100 dark:bg-purple-900/30", text: "text-purple-600 dark:text-purple-400", icon: "calendar_month" },
   issue: { bg: "bg-primary/10", text: "text-primary", icon: "check_circle" },
 };
 
@@ -48,10 +48,10 @@ export default function NotificationPanel({ open, onClose }: NotificationPanelPr
   return (
     <div
       ref={panelRef}
-      className="absolute right-0 top-full mt-2 w-96 max-h-[480px] overflow-y-auto bg-white rounded-xl shadow-xl border border-slate-200 z-50"
+      className="absolute right-0 top-full mt-2 w-96 max-h-[480px] overflow-y-auto bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 z-50"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 sticky top-0 bg-white rounded-t-xl">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 bg-white dark:bg-slate-800 rounded-t-xl">
         <div className="flex items-center gap-2">
           <h3 className="font-semibold text-sm">Notifications</h3>
           {unreadCount > 0 && (
@@ -66,13 +66,13 @@ export default function NotificationPanel({ open, onClose }: NotificationPanelPr
       </div>
 
       {/* Notification items */}
-      <div className="divide-y divide-slate-100">
+      <div className="divide-y divide-slate-100 dark:divide-slate-700">
         {notifications.map((n) => {
           const style = typeStyles[n.type];
           return (
             <div
               key={n.id}
-              className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors ${
+              className={`flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors ${
                 !n.read ? "bg-primary/[0.03]" : ""
               }`}
             >
@@ -81,13 +81,13 @@ export default function NotificationPanel({ open, onClose }: NotificationPanelPr
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-slate-800 truncate">{n.title}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{n.title}</p>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="text-[11px] text-slate-400">{n.time}</span>
                     {!n.read && <span className="size-2 bg-primary rounded-full" />}
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{n.desc}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{n.desc}</p>
               </div>
             </div>
           );
@@ -95,7 +95,7 @@ export default function NotificationPanel({ open, onClose }: NotificationPanelPr
       </div>
 
       {/* Footer */}
-      <div className="sticky bottom-0 bg-white border-t border-slate-100 rounded-b-xl">
+      <div className="sticky bottom-0 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 rounded-b-xl">
         <button className="w-full py-2.5 text-sm text-primary hover:text-primary-dark font-medium transition-colors">
           View All Notifications
         </button>

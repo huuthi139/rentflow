@@ -11,9 +11,9 @@ export default function StatCard({ label, value, change, changeLabel, icon, icon
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-primary/10 flex flex-col gap-2 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-primary/10 dark:border-slate-700 flex flex-col gap-2 shadow-sm">
       <div className="flex justify-between items-start">
-        <span className="text-sm font-medium text-slate-500">{label}</span>
+        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</span>
         {icon && (
           <span className={`material-symbols-outlined text-xl ${iconColor}`}>{icon}</span>
         )}

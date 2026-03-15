@@ -52,10 +52,10 @@ export default function Pagination({
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4">
-      <p className="text-sm text-slate-500">
-        Showing <span className="font-medium text-slate-700">{from}</span> to{" "}
-        <span className="font-medium text-slate-700">{to}</span> of{" "}
-        <span className="font-medium text-slate-700">{totalItems}</span> {label}
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        Showing <span className="font-medium text-slate-700 dark:text-slate-300">{from}</span> to{" "}
+        <span className="font-medium text-slate-700 dark:text-slate-300">{to}</span> of{" "}
+        <span className="font-medium text-slate-700 dark:text-slate-300">{totalItems}</span> {label}
       </p>
 
       <div className="flex items-center gap-1">
@@ -63,7 +63,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Previous
         </button>
@@ -81,7 +81,7 @@ export default function Pagination({
               className={`min-w-[36px] px-2 py-1.5 text-sm rounded-lg font-medium transition-colors ${
                 page === currentPage
                   ? "bg-primary text-white shadow-sm"
-                  : "text-slate-600 hover:bg-slate-50"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
               }`}
             >
               {page}
@@ -93,7 +93,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Next
         </button>
